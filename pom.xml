@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.trainings.automation</groupId>
+    <artifactId>evening8to9AutomationTesting</artifactId>
+
+    <!-- SNAPSHOT version is used to indicate that the current version of the project is under development and may change in the future-->
+    <!-- Release version is used to indicate that the current version of the project is stable and ready for production use-->
+    <version>1.0-SNAPSHOT</version>
+
+    <name>evening8to9AutomationTesting</name>
+    <url>http://www.example.com</url>
+
+    <properties>
+        <!--By Default when we create a maven project, maven will use Java 1.7 as default compiler version
+        we need to update the JDK as per the required because stopped before JDK 8-->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <testng-version>7.12.0</testng-version>
+    </properties>
+
+    <dependencies>
+
+        <!-- Source: https://mvnrepository.com/artifact/org.testng/testng -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng-version}</version>
+            <!-- when we mention the scope as test, it means that this dependency will only be used during the testing phase of the project and will not be included in the final build artifact.-->
+            <!-- we can use this library only in src/test/java folder and not in src/main/java folder-->
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>25</source>
+                    <target>25</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+
+</project>
