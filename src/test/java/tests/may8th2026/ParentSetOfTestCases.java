@@ -35,9 +35,17 @@ public class ParentSetOfTestCases
         IO.println("ParentSetOfTestCases beforeMethod");
     }
 
+    @Parameters("URL")
     @AfterMethod
-    public void afterMethodParent()
+    public void afterMethodParent(String appURL)
     {
         IO.println("ParentSetOfTestCases afterMethod");
+        IO.println("URL :"+appURL);
+    }
+
+    @Test
+    public void testParentSetOfTestCases()
+    {
+        IO.println("ParentSetOfTestCases testParentSetOfTestCases");
     }
 }
