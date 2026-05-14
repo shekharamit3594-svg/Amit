@@ -39,7 +39,7 @@ public class DataProviders {
         IO.println("The test data is :"+data);
     }
 
-    @DataProvider(name = "getData_2DArray",retryUsing = RetryDataProvider.class,cacheDataForTestRetries = false)
+    @DataProvider(name = "getData_2DArray",retryUsing = RetryDataProvider.class)
     public Object[][] getData_TwoDimensionalArray()
     {
         Object[][] data = new Object[4][2];
@@ -57,13 +57,13 @@ public class DataProviders {
 
         Arrays.fill(data[3],298.242);
 
-        if(initialCounter!=2) {
-            initialCounter++;
+//        if(initialCounter!=2) {
+//            initialCounter++;
             throw new RuntimeException("Error in Generating the data");
-        }
-
-        else
-            return data;
+//        }
+//
+//        else
+//            return data;
     }
 
     @Test(description = "Running the test cases with multiple sets of test data -> 2D Array",dataProvider = "getData_2DArray")
