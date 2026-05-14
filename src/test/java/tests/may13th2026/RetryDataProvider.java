@@ -11,14 +11,8 @@ public class RetryDataProvider implements IRetryDataProvider {
     @Override
     public boolean retry(IDataProviderMethod dataProvider)
     {
-        if(initialCounter<maxCounter) {
-            initialCounter++;
-            return true;
-        }
-
-        else
-        {
-            return false;
-        }
+        initialCounter++;
+        IO.println("Retry Count:"+initialCounter);
+        return initialCounter <= maxCounter;
     }
 }
