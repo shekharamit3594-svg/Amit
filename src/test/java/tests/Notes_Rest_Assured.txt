@@ -1,0 +1,8 @@
+From JDK 11 onwards, only --> JAVA Provided support for API Testing is available,
+because there is a class called as HTTPClient which is used to send the request and receive the response from the server.
+
+Rest Assured is a wrapper around the HTTPClient and it provides a lot of methods to make the API testing easier and more readable.
+
+Rest Assured is a Java library that provides a domain-specific language (DSL) for writing tests for RESTful APIs.
+It simplifies the process of sending HTTP requests and validating responses, making it easier to test APIs effectively.
+

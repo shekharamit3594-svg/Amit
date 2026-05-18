@@ -19,6 +19,8 @@
         we need to update the JDK as per the required because stopped before JDK 8-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <testng-version>7.12.0</testng-version>
+        <rest-assured-version>6.0.0</rest-assured-version>
+        <datafaker-version>2.5.4</datafaker-version>
     </properties>
 
     <dependencies>
@@ -31,6 +33,22 @@
             <!-- when we mention the scope as test, it means that this dependency will only be used during the testing phase of the project and will not be included in the final build artifact.-->
             <!-- we can use this library only in src/test/java folder and not in src/main/java folder-->
             <scope>test</scope>
+        </dependency>
+
+        <!-- Source: https://mvnrepository.com/artifact/io.rest-assured/rest-assured -->
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>${rest-assured-version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Source: https://mvnrepository.com/artifact/net.datafaker/datafaker -->
+        <dependency>
+            <groupId>net.datafaker</groupId>
+            <artifactId>datafaker</artifactId>
+            <version>${datafaker-version}</version>
+            <scope>compile</scope>
         </dependency>
 
     </dependencies>
