@@ -42,9 +42,9 @@ public class ContinuationOfUnderstandingHTTPMethods {
         Faker faker = new Faker();
         String jsonPayload= """
                 {
-                    "account_id": '%s',
-                    "email": '%s',
-                    "phone": '%s'
+                    "account_id": "%s",
+                    "email": "%s",
+                    "phone": "%s"
                 }
                 """.formatted(System.getProperty("Account Number"),faker.internet().emailAddress(),faker.phoneNumber().phoneNumber());
        Response response = given()
@@ -68,7 +68,7 @@ public class ContinuationOfUnderstandingHTTPMethods {
 
         String jsonPayload= """
                 {
-                    "account_id": '%s',
+                    "account_id": "%s"
                 }
         """.formatted(System.getProperty("Account Number"));
 
