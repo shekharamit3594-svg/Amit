@@ -75,7 +75,7 @@ public class ContinuationOfUnderstandingHTTPMethods {
        Response response = given()
             .contentType(ContentType.JSON)
             .body(jsonPayload)
-            .header("Authorization","Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZmVmNzNmNS05YTA4LTRmMmUtOGIzYy05M2UwMGYwM2EwMDAiLCJjbGllbnRfaWQiOiJqd3Rfazg3Sk9BaEd4MDA5Qk12TyIsIm5hbWUiOiJzcHJhaHVsMzMzQGdtYWlsLmNvbSIsInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiaWF0IjoxNzc5MjAxNDUxLCJleHAiOjE3NzkyMDUwNTF9.QLapbEsduG2yhou1ztFppCg5Ww-75EQP8O1RKFrh_PE")
+            .header( "Authorization","Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZmVmNzNmNS05YTA4LTRmMmUtOGIzYy05M2UwMGYwM2EwMDAiLCJjbGllbnRfaWQiOiJqd3Rfazg3Sk9BaEd4MDA5Qk12TyIsIm5hbWUiOiJzcHJhaHVsMzMzQGdtYWlsLmNvbSIsInJvbGUiOiJhdXRoZW50aWNhdGVkIiwiaWF0IjoxNzc5MjAxNDUxLCJleHAiOjE3NzkyMDUwNTF9.QLapbEsduG2yhou1ztFppCg5Ww-75EQP8O1RKFrh_PE")
         .when()
                 .delete("/delete-account")
         .then()
