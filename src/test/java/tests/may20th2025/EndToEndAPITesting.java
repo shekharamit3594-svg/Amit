@@ -134,7 +134,8 @@ public class EndToEndAPITesting extends BaseTest {
 
         String jsonPayload= """
                 {
-                    "account_id": "%s"
+                    "
+                    account_id": "%s"
                 }
         """.formatted(accountNumber);
 
