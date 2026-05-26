@@ -1,7 +1,5 @@
 package tests.may25th2026;
 
-import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -17,7 +15,7 @@ import lombok.experimental.FieldDefaults;
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE) //Ensures that all the variables are having private access modifier by default
 @Accessors(chain = true) //Ensures the concept of method chaining across all the setter methods
-public class RequestPOJO {
+public class RequestPOJO implements RequestData {
 
     //Here we are maintaining the variable name, same as the JSON keys so that during the time of serialization, proper mapping will be done
     @JsonProperty("account_holder_name") //Here we are passing the actual JSON key
