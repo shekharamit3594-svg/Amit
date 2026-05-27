@@ -4,6 +4,8 @@ import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.http.ContentType;
 import org.testng.annotations.Test;
 import tests.may20th2025.BaseTest;
+import tests.may25th2026.request.RequestPOJO;
+import tests.may25th2026.response.ResponsePOJO;
 
 import java.util.Arrays;
 import java.util.List;

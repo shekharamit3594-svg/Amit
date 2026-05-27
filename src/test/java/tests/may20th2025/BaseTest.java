@@ -4,21 +4,28 @@ import framework.PathUtils;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import net.datafaker.Faker;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
+import tests.may26th2026.SpecBuilders;
 
 import java.util.Optional;
 
 import static io.restassured.RestAssured.given;
 
+@FieldDefaults(level = AccessLevel.PROTECTED)
 public class BaseTest {
 
-    protected Faker faker;
+    Faker faker;
+    SpecBuilders specBuilders;
+
     @BeforeClass
     public void generateJWTToken(){
 
         faker = new Faker();
+        specBuilders = new SpecBuilders();
 
         String bearerToken = Optional.ofNullable(System.getProperty("accessToken")).orElseGet(() -> {
             String loginPayload = """

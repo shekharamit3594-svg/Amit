@@ -7,9 +7,8 @@ import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
 import tests.may25th2026.RequestData;
-import tests.may25th2026.RequestPOJO;
+import tests.may25th2026.request.RequestPOJO;
 
-import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.equalToIgnoringCase;

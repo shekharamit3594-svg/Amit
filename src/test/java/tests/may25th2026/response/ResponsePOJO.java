@@ -1,4 +1,4 @@
-package tests.may25th2026;
+package tests.may25th2026.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;

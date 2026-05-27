@@ -1,11 +1,13 @@
-package tests.may25th2026;
+package tests.may25th2026.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
+import tests.may25th2026.RequestData;
 
 //POJO --> Plain Old Java Object
 //That particular class will consist of setter and getter methods only. No business logic at all
@@ -19,9 +21,11 @@ public class RequestPOJO implements RequestData {
 
     //Here we are maintaining the variable name, same as the JSON keys so that during the time of serialization, proper mapping will be done
     @JsonProperty("account_holder_name") //Here we are passing the actual JSON key
+    @NonNull
     String accountHolderName; //Here we can maintain the variable name of your choice
 
     @JsonProperty("initial_balance")
+    @NonNull
     int initialBalance;
 
     @JsonProperty("account_type")
