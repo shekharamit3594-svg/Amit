@@ -60,7 +60,7 @@ jobs:
       - name: Generate custom HTML report
         if: always()
         run: |
-          python3 .github/scripts/generate_report.py \
+          node .github/scripts/generate_report.js \
             target/surefire-reports \
             target/test-report.html
 
