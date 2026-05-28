@@ -3,11 +3,16 @@ package tests.may26th2026;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
+import io.restassured.filter.log.LogDetail;
+import io.restassured.filter.log.RequestLoggingFilter;
+import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
 import tests.may25th2026.RequestData;
 import tests.may25th2026.request.RequestPOJO;
+
+import java.io.PrintStream;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.equalTo;
@@ -19,6 +24,15 @@ import static org.hamcrest.Matchers.isA;
 //It can before the API Call and after the API Call
 public class SpecBuilders {
 
+    // When set, request and response bodies are written to this stream instead of the console
+    private PrintStream logStream;
+
+    // Fluent setter — call specBuilders.withLogStream(printStream) before building specs
+    public SpecBuilders withLogStream(PrintStream logStream) {
+        this.logStream = logStream;
+        return this;
+    }
+
     //Here we are generating a common templates for the request
     //Below method is known as Request Spec Builder
     public RequestSpecification getRequestSpecification(RequestData... requestData)
@@ -28,6 +42,17 @@ public class SpecBuilders {
         requestSpecBuilder.setContentType(ContentType.JSON)
                 .addHeader("Authorization",System.getProperty("accessToken"))
                 .addFilter(new AllureRestAssured());
+
+        // LogDetail.BODY is the programmatic equivalent of .log().body()
+        // RequestLoggingFilter logs the outgoing request body
+        // ResponseLoggingFilter logs the incoming response body
+        // Both write to logStream (file) when set, otherwise they are skipped here
+        // (individual tests can still call .log().body() for console output)
+        if (logStream != null) {
+            requestSpecBuilder
+                    .addFilter(new RequestLoggingFilter(LogDetail.BODY, logStream))
+                    .addFilter(new ResponseLoggingFilter(LogDetail.BODY, logStream));
+        }
 
         if(requestData.length > 0)
         {

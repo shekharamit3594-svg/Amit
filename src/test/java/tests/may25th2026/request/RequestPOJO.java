@@ -1,5 +1,7 @@
 package tests.may25th2026.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -19,7 +21,6 @@ import tests.may25th2026.RequestData;
 @Accessors(chain = true) //Ensures the concept of method chaining across all the setter methods
 public class RequestPOJO implements RequestData {
 
-    //Here we are maintaining the variable name, same as the JSON keys so that during the time of serialization, proper mapping will be done
     @JsonProperty("account_holder_name") //Here we are passing the actual JSON key
     @NonNull
     String accountHolderName; //Here we can maintain the variable name of your choice
@@ -32,8 +33,7 @@ public class RequestPOJO implements RequestData {
     String accountType;
     String currency;
 
-    //@JsonIgnore
-    //String email; //Ensures that this particular will not be part of the JSON Request
+    //@JsonIgnore // Uncomment to exclude email from the JSON request
     String email;
     String phone;
 

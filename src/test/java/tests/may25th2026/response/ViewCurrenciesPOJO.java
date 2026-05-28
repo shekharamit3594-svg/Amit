@@ -1,5 +1,6 @@
 package tests.may25th2026.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
@@ -11,8 +12,8 @@ import lombok.experimental.FieldDefaults;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@JsonIgnoreProperties(ignoreUnknown = true) // Prevents deserialization failure if API adds new top-level fields
 public class ViewCurrenciesPOJO {
-    @JsonProperty("currencies")
     List<Currencies> currencies;
 
     @Override
@@ -37,17 +38,11 @@ public class ViewCurrenciesPOJO {
 
     @Data
     @FieldDefaults(level = AccessLevel.PRIVATE)
+    @JsonIgnoreProperties(ignoreUnknown = true) // Prevents deserialization failure if API adds new currency fields
     public static class Currencies {
-        @JsonProperty("id")
         String id;
-
-        @JsonProperty("code")
         String code;
-
-        @JsonProperty("name")
         String name;
-
-        @JsonProperty("symbol")
         String symbol;
 
         @JsonProperty("is_active")

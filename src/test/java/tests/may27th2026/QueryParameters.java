@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.lessThanOrEqualTo;
 
 public class QueryParameters extends BaseTest {
 
@@ -128,19 +129,17 @@ public class QueryParameters extends BaseTest {
         queryParams.put("sort_by", "account_holder_name");
         queryParams.put("order", "asc");
 
+        int actuallimit = queryParams.get("limit") instanceof Integer i ? i : 20;
+
         ViewAllAccountsResponsePOJO response=given()
                 .spec(specBuilders.getRequestSpecification())
-                .queryParams(queryParams) //We will be passing all the query parameters in the form of map
+                .queryParams(queryParams)
                 .when()
                 .get("/list-accounts")
                 .then()
-                //Checks if there are exactly 50 records under the data node
-                //.body("data", hasSize(50))
+                .spec(specBuilders.getResponseSpecification(200))
+                .body("data", hasSize(lessThanOrEqualTo(actuallimit)))
                 .extract().response().as(ViewAllAccountsResponsePOJO.class);
-
-        int actuallimit = queryParams.get("limit") instanceof Integer i? i:20;
-
-        Assert.assertTrue(response.getData().size()<=actuallimit);
     }
 
 }

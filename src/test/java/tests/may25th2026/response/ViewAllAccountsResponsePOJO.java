@@ -1,8 +1,11 @@
 package tests.may25th2026.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 import java.util.stream.Collectors;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,36 +16,26 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@JsonIgnoreProperties(ignoreUnknown = true) // Prevents deserialization failure if API adds new top-level fields
 public class ViewAllAccountsResponsePOJO {
-    @JsonProperty("success")
     Boolean success;
-
-    @JsonProperty("data")
     List<Data> data;
-
-    @JsonProperty("pagination")
     Pagination pagination;
-
-    @JsonProperty("links")
     Links links;
-
-    @JsonProperty("sort")
     Sort sort;
-
-    @JsonProperty("filters")
     Filters filters;
 
     @Override
     public String toString() {
         return """
-            {
-    "success": %b,
-    "data": %s,
-    "pagination": %s,
-    "links": %s,
-    "sort": %s,
-    "filters": %s
-}""".formatted(
+                {
+                    "success": %b,
+                    "data": %s,
+                    "pagination": %s,
+                    "links": %s,
+                    "sort": %s,
+                    "filters": %s
+                }""".formatted(
                 success,
                 formatArray(data),
                 pagination,
@@ -66,6 +59,7 @@ public class ViewAllAccountsResponsePOJO {
     @NoArgsConstructor
     @AllArgsConstructor
     @FieldDefaults(level = AccessLevel.PRIVATE)
+    @JsonIgnoreProperties(ignoreUnknown = true) // Prevents deserialization failure if API adds new data fields
     public static class Data {
         @JsonProperty("account_id")
         String accountId;
@@ -76,13 +70,8 @@ public class ViewAllAccountsResponsePOJO {
         @JsonProperty("account_type")
         String accountType;
 
-        @JsonProperty("currency")
         String currency;
-
-        @JsonProperty("email")
         Object email;
-
-        @JsonProperty("phone")
         String phone;
 
         @JsonProperty("address_line1")
@@ -91,19 +80,13 @@ public class ViewAllAccountsResponsePOJO {
         @JsonProperty("address_line2")
         String addressLine2;
 
-        @JsonProperty("city")
         String city;
-
-        @JsonProperty("state")
         String state;
 
         @JsonProperty("zip_code")
         String zipCode;
 
-        @JsonProperty("country")
         String country;
-
-        @JsonProperty("balance")
         Integer balance;
 
         @JsonProperty("created_at")
@@ -115,23 +98,23 @@ public class ViewAllAccountsResponsePOJO {
         @Override
         public String toString() {
             return """
-                {
-    "account_id": "%s",
-    "account_holder_name": "%s",
-    "account_type": "%s",
-    "currency": "%s",
-    "email": %s,
-    "phone": "%s",
-    "address_line1": "%s",
-    "address_line2": "%s",
-    "city": "%s",
-    "state": "%s",
-    "zip_code": "%s",
-    "country": "%s",
-    "balance": %d,
-    "created_at": "%s",
-    "updated_at": "%s"
-}""".formatted(
+                                    {
+                        "account_id": "%s",
+                        "account_holder_name": "%s",
+                        "account_type": "%s",
+                        "currency": "%s",
+                        "email": %s,
+                        "phone": "%s",
+                        "address_line1": "%s",
+                        "address_line2": "%s",
+                        "city": "%s",
+                        "state": "%s",
+                        "zip_code": "%s",
+                        "country": "%s",
+                        "balance": %d,
+                        "created_at": "%s",
+                        "updated_at": "%s"
+                    }""".formatted(
                     accountId,
                     accountHolderName,
                     accountType,
@@ -165,14 +148,10 @@ public class ViewAllAccountsResponsePOJO {
     @NoArgsConstructor
     @AllArgsConstructor
     @FieldDefaults(level = AccessLevel.PRIVATE)
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Pagination {
-        @JsonProperty("page")
         Integer page;
-
-        @JsonProperty("limit")
         Integer limit;
-
-        @JsonProperty("total")
         Integer total;
 
         @JsonProperty("total_pages")
@@ -193,16 +172,16 @@ public class ViewAllAccountsResponsePOJO {
         @Override
         public String toString() {
             return """
-                {
-    "page": %d,
-    "limit": %d,
-    "total": %d,
-    "total_pages": %d,
-    "has_next": %b,
-    "has_prev": %b,
-    "next_page": %s,
-    "prev_page": %s
-}""".formatted(
+                                    {
+                        "page": %d,
+                        "limit": %d,
+                        "total": %d,
+                        "total_pages": %d,
+                        "has_next": %b,
+                        "has_prev": %b,
+                        "next_page": %s,
+                        "prev_page": %s
+                    }""".formatted(
                     page,
                     limit,
                     total,
@@ -229,32 +208,24 @@ public class ViewAllAccountsResponsePOJO {
     @NoArgsConstructor
     @AllArgsConstructor
     @FieldDefaults(level = AccessLevel.PRIVATE)
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Links {
-        @JsonProperty("self")
         String self;
-
-        @JsonProperty("first")
         String first;
-
-        @JsonProperty("prev")
         Object prev;
-
-        @JsonProperty("next")
         Object next;
-
-        @JsonProperty("last")
         String last;
 
         @Override
         public String toString() {
             return """
-                {
-    "self": "%s",
-    "first": "%s",
-    "prev": %s,
-    "next": %s,
-    "last": "%s"
-}""".formatted(
+                                    {
+                        "self": "%s",
+                        "first": "%s",
+                        "prev": %s,
+                        "next": %s,
+                        "last": "%s"
+                    }""".formatted(
                     self,
                     first,
                     prev,
@@ -278,20 +249,20 @@ public class ViewAllAccountsResponsePOJO {
     @NoArgsConstructor
     @AllArgsConstructor
     @FieldDefaults(level = AccessLevel.PRIVATE)
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Sort {
         @JsonProperty("sort_by")
         String sortBy;
 
-        @JsonProperty("order")
         String order;
 
         @Override
         public String toString() {
             return """
-                {
-    "sort_by": "%s",
-    "order": "%s"
-}""".formatted(
+                                    {
+                        "sort_by": "%s",
+                        "order": "%s"
+                    }""".formatted(
                     sortBy,
                     order);
         }
@@ -312,14 +283,12 @@ public class ViewAllAccountsResponsePOJO {
     @NoArgsConstructor
     @AllArgsConstructor
     @FieldDefaults(level = AccessLevel.PRIVATE)
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Filters {
         @JsonProperty("account_type")
         Object accountType;
 
-        @JsonProperty("currency")
         String currency;
-
-        @JsonProperty("search")
         Object search;
 
         @JsonProperty("min_balance")
@@ -331,13 +300,13 @@ public class ViewAllAccountsResponsePOJO {
         @Override
         public String toString() {
             return """
-                {
-    "account_type": %s,
-    "currency": "%s",
-    "search": %s,
-    "min_balance": %s,
-    "max_balance": %s
-}""".formatted(
+                                    {
+                        "account_type": %s,
+                        "currency": "%s",
+                        "search": %s,
+                        "min_balance": %s,
+                        "max_balance": %s
+                    }""".formatted(
                     accountType,
                     currency,
                     search,

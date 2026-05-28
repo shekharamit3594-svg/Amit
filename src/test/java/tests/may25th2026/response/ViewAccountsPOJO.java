@@ -1,5 +1,6 @@
 package tests.may25th2026.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
@@ -11,11 +12,9 @@ import lombok.experimental.FieldDefaults;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@JsonIgnoreProperties(ignoreUnknown = true) // Prevents deserialization failure if API adds new top-level fields
 public class ViewAccountsPOJO {
-    @JsonProperty("success")
     Boolean success;
-
-    @JsonProperty("data")
     Data data;
 
     @Override
@@ -42,6 +41,7 @@ public class ViewAccountsPOJO {
 
     @lombok.Data
     @FieldDefaults(level = AccessLevel.PRIVATE)
+    @JsonIgnoreProperties(ignoreUnknown = true) // Prevents deserialization failure if API adds new data fields
     public static class Data {
         @JsonProperty("account_id")
         String accountId;
@@ -52,13 +52,8 @@ public class ViewAccountsPOJO {
         @JsonProperty("account_type")
         String accountType;
 
-        @JsonProperty("currency")
         String currency;
-
-        @JsonProperty("email")
         String email;
-
-        @JsonProperty("phone")
         String phone;
 
         @JsonProperty("address_line1")
@@ -67,19 +62,13 @@ public class ViewAccountsPOJO {
         @JsonProperty("address_line2")
         String addressLine2;
 
-        @JsonProperty("city")
         String city;
-
-        @JsonProperty("state")
         String state;
 
         @JsonProperty("zip_code")
         String zipCode;
 
-        @JsonProperty("country")
         String country;
-
-        @JsonProperty("balance")
         Integer balance;
 
         @JsonProperty("created_at")
