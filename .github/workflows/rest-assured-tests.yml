@@ -50,28 +50,31 @@ jobs:
           fi
 
       # -----------------------------------------------------------------------
-      # 4. Install Allure CLI (same version as allure-version in pom.xml)
-      #    and generate a self-contained HTML report from the raw results
-      #    written by AllureRestAssured during the test run.
+      # 4. Generate a custom self-contained HTML report.
+      #
+      #    generate_report.py reads every TEST-*.xml written by Surefire,
+      #    aggregates pass/fail/skip counts, renders a styled HTML page, and
+      #    surfaces the full error message + stack trace for every failing test.
+      #    Python 3 is pre-installed on ubuntu-latest; no extra installs needed.
       # -----------------------------------------------------------------------
-      - name: Generate Allure HTML report
+      - name: Generate custom HTML report
         if: always()
         run: |
-          curl -sSLo allure.tgz \
-            https://github.com/allure-framework/allure2/releases/download/2.34.0/allure-2.34.0.tgz
-          tar -xzf allure.tgz
-          ./allure-2.34.0/bin/allure generate allure-results --clean -o allure-report
+          python3 .github/scripts/generate_report.py \
+            target/surefire-reports \
+            target/test-report.html
 
       # -----------------------------------------------------------------------
-      # 5. Upload the generated HTML folder as a downloadable artifact.
-      #    Unzip locally and open allure-report/index.html in any browser.
+      # 5. Upload the single HTML file as a downloadable artifact.
+      #    Download from the Actions run page → open test-report.html directly
+      #    in any browser — no server or extra tooling required.
       # -----------------------------------------------------------------------
-      - name: Upload Allure HTML report
+      - name: Upload HTML test report
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: allure-html-report-${{ github.run_number }}
-          path: allure-report/
+          name: test-report-${{ github.run_number }}
+          path: target/test-report.html
           retention-days: 14
 
       # -----------------------------------------------------------------------
