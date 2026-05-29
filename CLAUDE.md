@@ -19,7 +19,7 @@ mvn clean test -Dsurefire.suiteXmlFiles=testng.xml
 mvn clean test -Dsurefire.suiteXmlFiles=testng.xml -DaccessToken="Bearer <token>"
 
 # Run a single test class
-mvn test -Dtest="tests.may28th2026.UnderstandingLoggingFilters"
+mvn test -Dtest="tests.may29th2026.UnderstandingLoggingFilters"
 
 # Serve Allure report after a test run (requires Allure CLI)
 allure serve allure-results

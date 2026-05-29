@@ -1,10 +1,13 @@
 name: Rest Assured API Tests
 
-# Trigger on every push to the restAssuredFundamentals branch
+# Trigger on every push to the restAssuredFundamentals branch, and on a schedule
+# Note: GitHub Actions enforces a minimum interval of ~5 minutes for scheduled runs
 on:
   push:
     branches:
       - restAssuredFundamentals
+  schedule:
+    - cron: '*/5 * * * *'
 
 jobs:
   api-tests:
@@ -85,5 +88,5 @@ jobs:
         if: always()
         with:
           name: api-logs-${{ github.run_number }}
-          path: target/logs/
+          path: src/test/resources/logs/
           retention-days: 7
