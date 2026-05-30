@@ -20,6 +20,7 @@ mvn clean test -Dsurefire.suiteXmlFiles=testng.xml -DaccessToken="Bearer <token>
 
 # Run a single test class
 mvn test -Dtest="tests.may29th2026.UnderstandingLoggingFilters"
+mvn test -Dtest="tests.may29th2026.FormParameters"
 
 # Serve Allure report after a test run (requires Allure CLI)
 allure serve allure-results
@@ -38,7 +39,8 @@ allure serve allure-results
 | `src/test/java/tests/may25th2026/` | Serialization/deserialization with POJOs + `RequestData` interface |
 | `src/test/java/tests/may26th2026/` | Hamcrest matchers + `SpecBuilders` for reusable request/response specs |
 | `src/test/java/tests/may27th2026/` | Query parameters: single param, multi-param via `Map`, deserialization into typed POJOs |
-| `src/test/java/tests/may28th2026/` | `RequestLoggingFilter` / `ResponseLoggingFilter` writing to `target/logs/api-logs.log` |
+| `src/test/java/tests/may28th2026/` | `RequestLoggingFilter` / `ResponseLoggingFilter` writing to `src/test/resources/logs/api-logs.log` |
+| `src/test/java/tests/may29th2026/` | Form parameters via `Map<String,Object>` + `getRequestSpecification_URLEncoded`; logging filters revisited in `UnderstandingLoggingFilters` |
 
 ### `BaseTest` (authentication backbone)
 
@@ -64,24 +66,48 @@ The credential password is stored Base64-encoded and decoded at runtime via `Pat
 
 - `getRequestSpecification()` — no body, auth header + Allure filter only.
 - `getRequestSpecification(RequestData)` — same plus serialized body.
+- `getRequestSpecification_URLEncoded(Map<String,Object>)` — sets `Content-Type: application/x-www-form-urlencoded` and adds all map entries as form params (used in may29th2026).
 - `getResponseSpecification(int)` — status code assertion only.
 - `getResponseSpecification(int, RequestData)` — full field-by-field assertion against the original `RequestPOJO`.
-- `withLogStream(PrintStream)` — fluent setter; once called, every subsequent spec automatically writes request/response bodies to the file (used in may28th2026).
+- `getResponseSpecification_FormParameters(int, Map<String,Object>)` — same field-by-field assertions but reads values from a `Map` instead of a POJO (used in may29th2026).
+- `withLogStream(PrintStream)` — fluent setter; once called, every subsequent spec automatically writes request/response bodies to the file (used in may28th2026 and may29th2026).
 
 New test classes should prefer `SpecBuilders` over hand-rolling request/response specs.
 
-### File logging pattern (may28th2026)
+### File logging pattern (may28th2026 / may29th2026)
 
-Two approaches for writing Rest Assured output to `target/logs/api-logs.log`:
+Log file path: `src/test/resources/logs/api-logs.log` (append mode; directory created at runtime via `logDir.mkdirs()`).
+
+Two approaches for writing Rest Assured output to the log file:
 
 1. **Inline** — add `.filter(new RequestLoggingFilter(LogDetail.BODY, logStream))` directly in the `given()` chain for per-test control.
-2. **Centralised** — call `specBuilders.withLogStream(logStream)` once in `@BeforeClass`; all subsequent spec-built requests log automatically.
+2. **Centralised** — call `specBuilders.withLogStream(logStream)` once in `@BeforeClass`; all subsequent spec-built requests log automatically. This is the approach used in `UnderstandingLoggingFilters`.
 
 `@BeforeClass(dependsOnMethods = "generateJWTToken")` ensures the log file is set up after auth completes. Always flush/close the `PrintStream` in `@AfterClass(alwaysRun = true)`.
+
+### Form parameters pattern (may29th2026)
+
+`FormParameters` demonstrates sending request data as `application/x-www-form-urlencoded` instead of JSON:
+
+- Build a `Map<String, Object>` with all field values.
+- Pass it to `specBuilders.getRequestSpecification_URLEncoded(map)` which calls `addFormParams()` on the `RequestSpecBuilder`.
+- Use `specBuilders.getResponseSpecification_FormParameters(statusCode, map)` for assertions.
+- **Note:** the `/create-account` Supabase Edge Function processes JSON and form data through different code paths; its form-data path uppercases string values before validation, which can cause `currency_not_found` errors. Use currency codes (e.g. `INR`) rather than full names when sending form params.
 
 ### Allure integration
 
 `SpecBuilders.getRequestSpecification()` adds `.filter(new AllureRestAssured())` automatically. Run `allure serve allure-results` after tests to view the report.
+
+### CI / GitHub Actions
+
+Workflow file: `.github/workflows/rest-assured-tests.yml`
+Default branch: `restAssuredFundamentals` (GitHub runs scheduled workflows from the default branch only).
+
+Triggers:
+- **push** to `restAssuredFundamentals`
+- **schedule** — cron `*/5 * * * *` (every 5 minutes; GitHub enforces a minimum of ~5 min and may delay runs under high load)
+
+The workflow runs the full TestNG suite, generates a self-contained HTML report via `.github/scripts/generate_report.js`, and uploads it as a downloadable artifact (`test-report-<run_number>`). API logs from `src/test/resources/logs/` are uploaded as a separate artifact (`api-logs-<run_number>`).
 
 ## Target API Endpoints
 
