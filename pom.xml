@@ -24,9 +24,27 @@
         <allure-version>2.34.0</allure-version>
         <jackson-databind>3.1.3</jackson-databind>
         <lombok-annotation>1.18.46</lombok-annotation>
+        <commons-lang>3.20.0</commons-lang>
+        <commons-configuration>LATEST</commons-configuration>
     </properties>
 
     <dependencies>
+
+        <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/commons-configuration2 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-configuration2</artifactId>
+            <version>${commons-configuration}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang}</version>
+            <scope>compile</scope>
+        </dependency>
 
         <!-- Source: https://mvnrepository.com/artifact/org.projectlombok/lombok -->
         <dependency>
