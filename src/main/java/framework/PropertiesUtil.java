@@ -45,7 +45,7 @@ public class PropertiesUtil {
 
     /****************************************************************************************/
 
-    static class BankingEndPoints {
+    public static class BankingEndPoints {
 
         @SneakyThrows
         private PropertiesConfiguration getAPIBasedConfiguration()
@@ -63,6 +63,17 @@ public class PropertiesUtil {
             return getAPIBasedConfiguration().getString(key,key+" not found");
         }
 
+        public String getUserName() {
+            return getProperty_API("UserName");
+        }
+
+        public String getPassword() {
+            return getProperty_API("Password");
+        }
+
+        public String getLoginURL() {
+            return getProperty_API("LoginURL");
+        }
         public String getBaseURL() {
             return getProperty_API("BaseURL");
         }
