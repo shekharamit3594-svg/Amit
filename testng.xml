@@ -2,9 +2,11 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="Banking API">
     <test verbose="2" preserve-order="true"
-          name="Account Related Scenarios">
+          name="Banking Related Scenarios">
         <classes>
-            <class name="tests.may27th2026.QueryParameters"/>
+            <class name="tests.CurrencyTest"/>
+            <class name="tests.AccountsTest"></class>
+            <class name="tests.DepositAmountTests"></class>
         </classes>
     </test>
 </suite>

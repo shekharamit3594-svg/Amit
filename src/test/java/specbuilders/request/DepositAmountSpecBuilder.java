@@ -12,11 +12,11 @@ import pojo.request.RequestPOJO;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @AllArgsConstructor
-public class AccountSpecBuilder {
+public class DepositAmountSpecBuilder {
 
     TestUtil testUtil;
 
-    public RequestSpecification getAccountSpecBuilder(RequestPOJO... request)
+    public RequestSpecification getDepositAmountSpecBuilder(RequestPOJO... request)
     {
 
         RequestSpecBuilder specBuilder = new RequestSpecBuilder();

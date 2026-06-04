@@ -7,7 +7,6 @@ import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.PropertiesConfigurationLayout;
 
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 
 //We use this class to read the data from the property file
@@ -96,6 +95,14 @@ public class PropertiesUtil {
 
         public String getDeleteAccountEndPoint() {
             return getProperty_API("DeleteAccount");
+        }
+
+        public String getListOfCurrencies() {
+            return getProperty_API("ListAllCurrencies");
+        }
+
+        public String getDepositAmount() {
+            return getProperty_API("DepositAmount");
         }
     }
 
