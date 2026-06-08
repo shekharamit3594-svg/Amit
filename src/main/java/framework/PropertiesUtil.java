@@ -104,6 +104,14 @@ public class PropertiesUtil {
         public String getDepositAmount() {
             return getProperty_API("DepositAmount");
         }
+
+        public String getWithdrawAmount() {
+            return getProperty_API("WithdrawAmount");
+        }
+
+        public String getListOfTransactions() {
+            return getProperty_API("ListOfTransactions");
+        }
     }
 
 }

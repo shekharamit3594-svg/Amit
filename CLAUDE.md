@@ -4,23 +4,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Maven-based Java (JDK 25) API automation training project using Rest Assured and TestNG against a live Supabase Banking API backend. Each session's tests live in a date-stamped package under `src/test/java/tests/`.
+Maven-based Java (JDK 25) API automation training project using Rest Assured and TestNG against a live Supabase Banking API backend. The project has two layers: date-stamped session packages under `src/test/java/tests/` (exploration/training history) and a refactored production-style framework (`tests/`, `specbuilders/`, `pojo/`, `listeners/`).
 
 ## Commands
 
 ```bash
-# Compile and run all tests via Maven defaults (testng.xml is the default suite)
+# Run the full suite (testng.xml is wired into Surefire in pom.xml)
 mvn clean test
 
-# Run the explicitly ordered Banking API suite
+# Run the suite explicitly
 mvn clean test -Dsurefire.suiteXmlFiles=testng.xml
 
-# Skip the auto-login step by supplying a valid token
-mvn clean test -Dsurefire.suiteXmlFiles=testng.xml -DaccessToken="Bearer <token>"
+# Supply a pre-fetched token to skip auto-login
+mvn clean test -DaccessToken="Bearer <token>"
 
 # Run a single test class
+mvn test -Dtest="tests.AccountsTest"
 mvn test -Dtest="tests.may29th2026.UnderstandingLoggingFilters"
-mvn test -Dtest="tests.may29th2026.FormParameters"
 
 # Serve Allure report after a test run (requires Allure CLI)
 allure serve allure-results
@@ -32,82 +32,95 @@ allure serve allure-results
 
 | Location | Purpose |
 |---|---|
-| `src/main/java/framework/` | Shared utilities (`PathUtils` for Base64 encode/decode) |
-| `src/test/java/tests/may18th2026/` | First HTTP methods exploration |
-| `src/test/java/tests/may19th2026/` | Continuation of HTTP methods |
-| `src/test/java/tests/may20th2025/` | `BaseTest` + first full CRUD end-to-end suite |
-| `src/test/java/tests/may25th2026/` | Serialization/deserialization with POJOs + `RequestData` interface |
-| `src/test/java/tests/may26th2026/` | Hamcrest matchers + `SpecBuilders` for reusable request/response specs |
-| `src/test/java/tests/may27th2026/` | Query parameters: single param, multi-param via `Map`, deserialization into typed POJOs |
-| `src/test/java/tests/may28th2026/` | `RequestLoggingFilter` / `ResponseLoggingFilter` writing to `src/test/resources/logs/api-logs.log` |
-| `src/test/java/tests/may29th2026/` | Form parameters via `Map<String,Object>` + `getRequestSpecification_URLEncoded`; logging filters revisited in `UnderstandingLoggingFilters` |
+| `src/main/java/framework/` | `PropertiesUtil` (two-level config), `TestUtil` (in-memory data store), `PathUtils` (Base64), `constants/StatusCodes` (HTTP status enum) |
+| `src/test/java/pojo/` | Centralised request/response POJOs, grouped by domain (`account/`, `deposit/`, `withdraw/`, `login/`, etc.) |
+| `src/test/java/specbuilders/` | `request/` spec builders (`LoginSpecBuilder`, `AccountSpecBuilder`, `DepositOrWithDrawAmountSpecBuilder`); `response/` spec builders (`AccountResponseSpecBuilder`) |
+| `src/test/java/listeners/` | `RetryAnalyser` (3 retries on failure), `AnnotationTransformers` (injects retry + "Regression" group globally) |
+| `src/test/java/tests/` | Production-style test classes (`BaseTest`, `AccountsTest`, `CurrencyTest`, `DepositAmountTests`, `WithdrawalAmountTests`, `ListOfTransactionsTests`) |
+| `src/test/java/tests/may*th2026/` | Date-stamped training sessions (exploration history; kept for reference) |
+
+### Two-level configuration
+
+`Config.properties` (repo root) declares `TypeOfAPI = Banking`. `PropertiesUtil` reads this first, then loads `src/test/resources/PropertiesFiles/<TypeOfAPI>Config.properties` (`BankingConfig.properties`) for all API-specific settings (base URL, login URL, credentials, endpoint paths). To add a new API target, add a new `<Type>Config.properties` and set `TypeOfAPI` accordingly.
+
+### `TestUtil` — in-memory data store
+
+`framework.TestUtil` is a `Map<String,String>` wrapper (`setData` / `getData`) instantiated in `BaseTest` and passed into spec builders. Use it to share runtime values across tests in the same suite run (e.g. `AccessToken`, `Account Number`). Prefer `testUtil` over `System.setProperty` for framework data; `System.setProperty` is still used for values that must be available before `BaseTest.beforeClass` runs (e.g. `Currency` set by `CurrencyTest`).
 
 ### `BaseTest` (authentication backbone)
 
-All test classes that need auth extend `tests.may20th2025.BaseTest`. Its `@BeforeClass` method:
-1. Checks `System.getProperty("accessToken")` first (allows CI override via `-DaccessToken`).
-2. If absent, calls `POST /auth/v1/token` on Supabase to obtain a JWT and stores it as `Bearer <token>` in the `accessToken` system property.
-3. `@BeforeMethod` sets `RestAssured.baseURI` to the Supabase Edge Functions endpoint.
+All production test classes extend `tests.BaseTest`. Its `@BeforeClass`:
+1. Instantiates `PropertiesUtil`, `TestUtil`, `LoginSpecBuilder`, `AccountSpecBuilder`, `AccountResponseSpecBuilder`, `DepositOrWithDrawAmountSpecBuilder`, and `Faker`.
+2. Sets `RestAssured.baseURI` from `BankingEndPoints.getBaseURL()`.
+3. Calls `loginToTheAPI()`, which POSTs to the Supabase auth endpoint and stores the JWT via `testUtil.setData("AccessToken", ...)` — skipped if the token is already present (allows re-use across classes in the same suite).
 
-The credential password is stored Base64-encoded and decoded at runtime via `PathUtils.decodeData(...)`. Do not commit decoded credentials.
+All `protected` fields (spec builders, `testUtil`, `faker`, `bankingEndPoints`) are available to subclasses.
 
-`BaseTest` also instantiates `faker` (Datafaker) and `specBuilders` (SpecBuilders) as `protected` fields available to every subclass.
+### `SpecBuilders` — two generations
+
+**Session-based** (`tests.may26th2026.SpecBuilders`) — used by date-stamped test classes; see historical notes below.
+
+**Centralised** (under `specbuilders/`):
+- `LoginSpecBuilder.getLoginRequestSpec(RequestPOJO...)` — `Content-Type: JSON` + `apikey` header; body optional.
+- `AccountSpecBuilder.getAccountSpecBuilder(RequestPOJO...)` — adds `Authorization: Bearer <token>` from `testUtil`, `apikey` header, `AllureRestAssured` filter; body optional.
+- `DepositOrWithDrawAmountSpecBuilder.getDepositOrWithdrawAmountSpecBuilder(RequestPOJO...)` — same headers as `AccountSpecBuilder`; used for deposit, withdrawal, and list-transactions calls.
+- `AccountResponseSpecBuilder.getAccountResponseSpec(int, RequestPOJO...)` — asserts status code and `Content-Type: JSON`.
+
+New test classes should use the centralised spec builders under `specbuilders/`.
+
+### `StatusCodes` enum
+
+`framework.constants.StatusCodes` enumerates HTTP codes (`SUCCESS`, `CREATED`, `BAD_REQUEST`, `UNAUTHORIZED`, `PAGE_NOT_FOUND`, `METHOD_NOT_ALLOWED`, `NO_CONTENT`). Use `StatusCodes.SUCCESS.getStatusCode()` instead of magic integers.
+
+### Listeners
+
+`AnnotationTransformers` (registered in `testng.xml`) runs before every test method and:
+1. Injects `RetryAnalyser` as the retry analyzer — failed tests are retried up to 3 times before being marked failed.
+2. Adds every test to the `"Regression"` group automatically.
+
+### Suite execution order
+
+`testng.xml` runs the following classes in order with `preserve-order="true"`:
+1. `CurrencyTest` — fetches all currencies, picks one at random, stores code in `System.setProperty("Currency")`.
+2. `AccountsTest` — creates an account using `System.getProperty("Currency")`, stores `account_id` in `System.setProperty("Account Number")`.
+3. `DepositAmountTests` — deposits into the account created above.
+4. `WithdrawalAmountTests` — withdraws from the same account.
+5. `ListOfTransactionsTests` — asserts the transactions list for the account.
+
+Later classes depend on `System.setProperty` values set by earlier ones; running individual classes out of order requires supplying those values manually.
 
 ### POJO strategy
 
-- `RequestPOJO` uses Lombok `@Getter`/`@Setter`/`@Accessors(chain=true)` for fluent builders and `@JsonProperty` to map camelCase fields to snake_case JSON keys.
-- `ResponsePOJO` mirrors the response shape with a nested static `Data` class.
-- The `RequestData` marker interface allows `SpecBuilders` to accept any request POJO without coupling to a concrete type.
-- POJOs live beside the test package that introduced them; promote to `src/main/java` only if shared across multiple sessions.
+All POJOs extend or implement `pojo.request.RequestPOJO` (marker type) to allow spec builders to accept any request type via varargs. Request POJOs use Lombok `@Getter`/`@Setter`/`@Accessors(chain=true)` for fluent building and `@JsonProperty` for snake_case JSON mapping. Response POJOs mirror the exact response shape, often with a nested `Data` class.
 
-### `SpecBuilders`
+### Session-based historical packages
 
-`tests.may26th2026.SpecBuilders` encapsulates common setup so individual tests call `.spec(specBuilders.getRequestSpecification(request))` and `.spec(specBuilders.getResponseSpecification(statusCode, request))` instead of repeating headers, filters, and matchers inline.
+| Session | Key concepts introduced |
+|---|---|
+| `may18th–19th2026` | First HTTP methods exploration |
+| `may20th2025` | Original `BaseTest` + first full CRUD suite |
+| `may25th2026` | POJO serialization/deserialization + `RequestData` interface |
+| `may26th2026` | Hamcrest matchers + first `SpecBuilders` |
+| `may27th2026` | Query parameters, `Map`-based multi-param, typed deserialization |
+| `may28th2026` | File-based logging via `RequestLoggingFilter`/`ResponseLoggingFilter` |
+| `may29th2026` | Form parameters (`application/x-www-form-urlencoded`), centralised log stream |
 
-- `getRequestSpecification()` — no body, auth header + Allure filter only.
-- `getRequestSpecification(RequestData)` — same plus serialized body.
-- `getRequestSpecification_URLEncoded(Map<String,Object>)` — sets `Content-Type: application/x-www-form-urlencoded` and adds all map entries as form params (used in may29th2026).
-- `getResponseSpecification(int)` — status code assertion only.
-- `getResponseSpecification(int, RequestData)` — full field-by-field assertion against the original `RequestPOJO`.
-- `getResponseSpecification_FormParameters(int, Map<String,Object>)` — same field-by-field assertions but reads values from a `Map` instead of a POJO (used in may29th2026).
-- `withLogStream(PrintStream)` — fluent setter; once called, every subsequent spec automatically writes request/response bodies to the file (used in may28th2026 and may29th2026).
+Log file written by session tests: `src/test/resources/logs/api-logs.log` (append mode).
 
-New test classes should prefer `SpecBuilders` over hand-rolling request/response specs.
-
-### File logging pattern (may28th2026 / may29th2026)
-
-Log file path: `src/test/resources/logs/api-logs.log` (append mode; directory created at runtime via `logDir.mkdirs()`).
-
-Two approaches for writing Rest Assured output to the log file:
-
-1. **Inline** — add `.filter(new RequestLoggingFilter(LogDetail.BODY, logStream))` directly in the `given()` chain for per-test control.
-2. **Centralised** — call `specBuilders.withLogStream(logStream)` once in `@BeforeClass`; all subsequent spec-built requests log automatically. This is the approach used in `UnderstandingLoggingFilters`.
-
-`@BeforeClass(dependsOnMethods = "generateJWTToken")` ensures the log file is set up after auth completes. Always flush/close the `PrintStream` in `@AfterClass(alwaysRun = true)`.
-
-### Form parameters pattern (may29th2026)
-
-`FormParameters` demonstrates sending request data as `application/x-www-form-urlencoded` instead of JSON:
-
-- Build a `Map<String, Object>` with all field values.
-- Pass it to `specBuilders.getRequestSpecification_URLEncoded(map)` which calls `addFormParams()` on the `RequestSpecBuilder`.
-- Use `specBuilders.getResponseSpecification_FormParameters(statusCode, map)` for assertions.
-- **Note:** the `/create-account` Supabase Edge Function processes JSON and form data through different code paths; its form-data path uppercases string values before validation, which can cause `currency_not_found` errors. Use currency codes (e.g. `INR`) rather than full names when sending form params.
-
-### Allure integration
-
-`SpecBuilders.getRequestSpecification()` adds `.filter(new AllureRestAssured())` automatically. Run `allure serve allure-results` after tests to view the report.
+Form-params note: the `/create-account` Supabase edge function uppercases string values on the form-data path; use currency codes (e.g. `INR`) rather than full names.
 
 ### CI / GitHub Actions
 
-Workflow file: `.github/workflows/rest-assured-tests.yml`
-Default branch: `restAssuredFundamentals` (GitHub runs scheduled workflows from the default branch only).
+Workflow: `.github/workflows/rest-assured-tests.yml`.
 
-Triggers:
-- **push** to `restAssuredFundamentals`
-- **schedule** — cron `*/5 * * * *` (every 5 minutes; GitHub enforces a minimum of ~5 min and may delay runs under high load)
+Triggers: push/PR to `restAssuredFramework` or `main`; `workflow_dispatch` (manual run with optional token input); schedule every 6 hours. Concurrent runs for the same branch/PR are auto-cancelled on new push.
 
-The workflow runs the full TestNG suite, generates a self-contained HTML report via `.github/scripts/generate_report.js`, and uploads it as a downloadable artifact (`test-report-<run_number>`). API logs from `src/test/resources/logs/` are uploaded as a separate artifact (`api-logs-<run_number>`).
+Steps in order:
+1. Compile sources (`mvn compile test-compile`) — fails fast before test execution.
+2. Run TestNG suite — token resolved from `workflow_dispatch` input → `ACCESS_TOKEN` secret → BaseTest auto-login.
+3. Generate Allure HTML report via Allure CLI 2.34.0 (matches `allure-testng` in pom.xml).
+4. Generate `target/test-report.html` (custom report) and write `$GITHUB_STEP_SUMMARY` (inline on the run page) via `.github/scripts/generate_report.js` and `.github/scripts/generate_summary.js`.
+5. Upload artifacts: `allure-report-<n>` (14 days), `test-report-<n>` (14 days), `api-logs-<n>` (7 days).
 
 ## Target API Endpoints
 
@@ -116,19 +129,21 @@ Base URI: `https://qnajbqxmpbmndnwdqswq.supabase.co/functions/v1`
 | Method | Path | Purpose |
 |---|---|---|
 | POST | `/create-account` | Create a bank account |
-| GET | `/view-account?account_id=<id>` | Fetch single account details |
-| GET | `/list-accounts` | List accounts (supports `currency`, `limit`, `sort_by`, `order` query params) |
-| GET | `/manage-currencies?include_inactive=true` | List all currencies |
-| PATCH | `/patch-account` | Update account fields (e.g. name, email) |
+| GET | `/view-account?account_id=<id>` | Fetch single account |
+| GET | `/list-accounts` | List accounts (supports `currency`, `limit`, `sort_by`, `order`) |
+| GET | `/manage-currencies` | List all currencies |
+| PATCH | `/patch-account` | Update account fields |
 | DELETE | `/delete-account?account_id=<id>` | Remove account |
+| POST | `/deposit` | Deposit into an account |
+| POST | `/withdraw` | Withdraw from an account |
+| GET | `/list-transactions?account_id=<id>&page=<n>&limit=<n>` | List transactions |
 
-Tests create and delete real records in the remote Supabase database; run on a network connection and expect side effects.
+Tests create and delete real records; requires a live network connection.
 
 ## Coding Conventions
 
-- **Class names**: descriptive scenario names (`UnderstandingHamcrestMatchers`) or role names (`BaseTest`, `SpecBuilders`).
-- **Test ordering**: use `@Test(description = "...", priority = N)` when tests form a workflow (create → view → patch → delete).
-- **Query parameters**: pass a single param with `.queryParam(key, value)`; pass multiple with `.queryParams(Map<String, Object>)`.
-- **Assertions**: prefer inline Hamcrest matchers in the `.then()` chain; fall back to `Assert.*` for post-extraction checks.
-- **Logging**: use `IO.println(...)` (Java 25 preview) for console output; use `.log().ifValidationFails()` in Rest Assured for failure-only logging.
+- **Test ordering**: use `@Test(description = "...", priority = N)` when tests form a workflow.
+- **Status codes**: always use `StatusCodes.<NAME>.getStatusCode()`, never magic integers.
+- **Data sharing**: use `testUtil.setData`/`getData` for framework-owned values; `System.setProperty`/`getProperty` for values that cross `@BeforeClass` boundaries between test classes.
+- **Assertions**: prefer inline Hamcrest matchers in `.then()`; use `Assert.*` for post-extraction checks.
 - **Commit style**: short sentence summaries, e.g. `Discussed about Hamcrest Matchers and Spec Builders`.

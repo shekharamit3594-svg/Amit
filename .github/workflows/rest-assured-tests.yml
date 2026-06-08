@@ -1,21 +1,33 @@
-name: Rest Assured API Tests
+name: Banking API — Rest Assured Tests
 
-# Trigger on every push to the restAssuredFundamentals branch, and on a schedule
-# Note: GitHub Actions enforces a minimum interval of ~5 minutes for scheduled runs
+# Runs on push / pull-request to main dev branches, on a schedule, and
+# on-demand via the Actions UI (with an optional pre-fetched token).
 on:
   push:
-    branches:
-      - restAssuredFundamentals
+    branches: [restAssuredFramework, main]
+  pull_request:
+    branches: [restAssuredFramework, main]
   schedule:
-    - cron: '*/5 * * * *'
+    # Every 6 hours — GitHub enforces ≥5 min but rarely honours sub-10 min cadences.
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      access_token:
+        description: 'Pre-fetched Bearer token (skips auto-login; leave blank to let BaseTest authenticate)'
+        required: false
+        default: ''
+
+# Cancel a running job for the same branch/PR when a newer push arrives.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   api-tests:
     name: Banking API Test Suite
     runs-on: ubuntu-latest
-
-    # Timeout safeguard — Supabase cold starts can add latency; 15 min is generous
-    timeout-minutes: 10
+    # 15 min covers Supabase cold-start latency + 5 chained test classes + report generation.
+    timeout-minutes: 15
 
     steps:
       # -----------------------------------------------------------------------
@@ -32,61 +44,94 @@ jobs:
         with:
           java-version: '25'
           distribution: 'temurin'
-          cache: maven         # caches ~/.m2 keyed on pom.xml hash
+          cache: maven   # caches ~/.m2 keyed on pom.xml hash
 
       # -----------------------------------------------------------------------
-      # 3. Run the TestNG suite
-      #
-      #    - testng.xml is the default suite wired into the Surefire plugin,
-      #      so no extra -D flag is needed beyond what pom.xml already sets.
-      #    - accessToken: if the secret is set, it skips the live Supabase login
-      #      (faster + avoids rate limits); if not set, BaseTest auto-logins.
+      # 3. Compile — fast-fail before spending time on test execution
       # -----------------------------------------------------------------------
-      - name: Run Rest Assured tests
+      - name: Compile sources
+        run: mvn compile test-compile --no-transfer-progress
+
+      # -----------------------------------------------------------------------
+      # 4. Run the TestNG suite
+      #
+      #    Token resolution order:
+      #      1. workflow_dispatch input  (manual runs)
+      #      2. ACCESS_TOKEN secret      (all automated runs)
+      #      3. absent → BaseTest calls POST /auth/v1/token at runtime
+      #
+      #    testng.xml is the default suite wired into Surefire in pom.xml,
+      #    so no extra -D flag is needed.
+      # -----------------------------------------------------------------------
+      - name: Run Banking API test suite
         env:
-          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          ACCESS_TOKEN: ${{ inputs.access_token || secrets.ACCESS_TOKEN }}
         run: |
-          if [ -n "$ACCESS_TOKEN" ]; then
-            mvn clean test -DaccessToken="$ACCESS_TOKEN"
+          TOKEN="${ACCESS_TOKEN:-}"
+          if [ -n "$TOKEN" ]; then
+            mvn test --no-transfer-progress -DaccessToken="$TOKEN"
           else
-            mvn clean test
+            mvn test --no-transfer-progress
           fi
 
       # -----------------------------------------------------------------------
-      # 4. Generate a custom self-contained HTML report.
+      # 5. Generate Allure HTML report
       #
-      #    generate_report.py reads every TEST-*.xml written by Surefire,
-      #    aggregates pass/fail/skip counts, renders a styled HTML page, and
-      #    surfaces the full error message + stack trace for every failing test.
-      #    Python 3 is pre-installed on ubuntu-latest; no extra installs needed.
+      #    allure-testng (v2.34.0) writes raw JSON results to allure-results/.
+      #    The matching Allure CLI converts them to a self-contained HTML site.
       # -----------------------------------------------------------------------
-      - name: Generate custom HTML report
+      - name: Install Allure CLI and generate report
         if: always()
+        run: |
+          wget -q https://github.com/allure-framework/allure2/releases/download/2.34.0/allure-2.34.0.tgz
+          tar -xzf allure-2.34.0.tgz
+          ./allure-2.34.0/bin/allure generate allure-results --clean -o target/allure-report
+
+      # -----------------------------------------------------------------------
+      # 6. Custom HTML report  +  GitHub Step Summary
+      #
+      #    generate_report.js  → target/test-report.html  (downloadable artifact)
+      #    generate_summary.js → $GITHUB_STEP_SUMMARY     (inline on the run page)
+      # -----------------------------------------------------------------------
+      - name: Generate HTML report and job summary
+        if: always()
+        env:
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_RUN_NUMBER: ${{ github.run_number }}
         run: |
           node .github/scripts/generate_report.js \
             target/surefire-reports \
             target/test-report.html
+          node .github/scripts/generate_summary.js \
+            target/surefire-reports >> "$GITHUB_STEP_SUMMARY"
 
       # -----------------------------------------------------------------------
-      # 5. Upload the single HTML file as a downloadable artifact.
-      #    Download from the Actions run page → open test-report.html directly
-      #    in any browser — no server or extra tooling required.
+      # 7. Artifacts
       # -----------------------------------------------------------------------
+      - name: Upload Allure report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: allure-report-${{ github.run_number }}
+          path: target/allure-report/
+          if-no-files-found: warn
+          retention-days: 14
+
       - name: Upload HTML test report
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-report-${{ github.run_number }}
           path: target/test-report.html
+          if-no-files-found: warn
           retention-days: 14
 
-      # -----------------------------------------------------------------------
-      # 6. Upload file-based logs written by UnderstandingLoggingFilters
-      # -----------------------------------------------------------------------
-      - name: Upload API log file
+      - name: Upload API logs
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: api-logs-${{ github.run_number }}
           path: src/test/resources/logs/
+          if-no-files-found: ignore
           retention-days: 7

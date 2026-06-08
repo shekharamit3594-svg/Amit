@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="Banking API">
+
+    <listeners>
+        <listener class-name="listeners.AnnotationTransformers"></listener>
+    </listeners>
+
     <test verbose="2" preserve-order="true"
           name="Banking Related Scenarios">
         <classes>
             <class name="tests.CurrencyTest"/>
             <class name="tests.AccountsTest"></class>
             <class name="tests.DepositAmountTests"></class>
+            <class name="tests.WithdrawalAmountTests"></class>
+            <class name="tests.ListOfTransactionsTests"></class>
         </classes>
     </test>
 </suite>

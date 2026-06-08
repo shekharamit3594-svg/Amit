@@ -12,7 +12,7 @@ import org.testng.annotations.BeforeSuite;
 import pojo.request.login.LoginRequest;
 import pojo.response.login.LoginResponse;
 import specbuilders.request.AccountSpecBuilder;
-import specbuilders.request.DepositAmountSpecBuilder;
+import specbuilders.request.DepositOrWithDrawAmountSpecBuilder;
 import specbuilders.request.LoginSpecBuilder;
 import specbuilders.response.AccountResponseSpecBuilder;
 
@@ -26,7 +26,7 @@ public class BaseTest {
     LoginSpecBuilder loginSpecBuilder;
     AccountSpecBuilder accountSpecBuilder;
     AccountResponseSpecBuilder accountResponseSpecBuilder;
-    DepositAmountSpecBuilder depositAmountSpecBuilder;
+    DepositOrWithDrawAmountSpecBuilder depositAmountSpecBuilder;
     TestUtil testUtil;
     Faker faker;
 
@@ -44,7 +44,7 @@ public class BaseTest {
         accountSpecBuilder=new AccountSpecBuilder(testUtil);
         faker = new Faker();
         accountResponseSpecBuilder=new AccountResponseSpecBuilder();
-        depositAmountSpecBuilder=new DepositAmountSpecBuilder(testUtil);
+        depositAmountSpecBuilder=new DepositOrWithDrawAmountSpecBuilder(testUtil);
 
         if(propertiesUtil.getTypeOfAPI().equalsIgnoreCase("Banking"))
         {
