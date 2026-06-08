@@ -95,10 +95,6 @@ jobs:
       # -----------------------------------------------------------------------
       - name: Generate HTML report and job summary
         if: always()
-        env:
-          GITHUB_REF_NAME: ${{ github.ref_name }}
-          GITHUB_SHA: ${{ github.sha }}
-          GITHUB_RUN_NUMBER: ${{ github.run_number }}
         run: |
           node .github/scripts/generate_report.js \
             target/surefire-reports \
