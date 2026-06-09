@@ -19,4 +19,9 @@ public class PathUtils {
     {
         return System.getProperty("user.dir")+"//src//test//resources//PropertiesFiles";
     }
+
+    public String getTestDataPath()
+    {
+        return System.getProperty("user.dir")+"//src//test//resources//Test_Data//banking_details.csv";
+    }
 }

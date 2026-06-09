@@ -27,9 +27,18 @@
         <commons-lang>3.20.0</commons-lang>
         <commons-configuration>LATEST</commons-configuration>
         <opencsv-version>LATEST</opencsv-version>
+        <google-guava>LATEST</google-guava>
     </properties>
 
     <dependencies>
+
+        <!-- Source: https://mvnrepository.com/artifact/com.google.guava/guava -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${google-guava}</version>
+            <scope>compile</scope>
+        </dependency>
 
         <!-- Source: https://mvnrepository.com/artifact/com.opencsv/opencsv -->
         <dependency>

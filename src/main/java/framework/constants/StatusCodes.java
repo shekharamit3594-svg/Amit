@@ -11,6 +11,7 @@ public enum StatusCodes {
     BAD_REQUEST(400),
     UNAUTHORIZED(401),
     METHOD_NOT_ALLOWED(405),
+    DUPLICATE_DATA(409),
     NO_CONTENT(204);
 
     int statusCode;
