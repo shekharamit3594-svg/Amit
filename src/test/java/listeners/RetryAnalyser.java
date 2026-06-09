@@ -5,15 +5,15 @@ import org.testng.ITestResult;
 
 public class RetryAnalyser implements IRetryAnalyzer {
 
-    int initalCounter=0;
+    int initialCounter=0;
     int maxCounter=3;
 
     @Override
     public boolean retry(ITestResult result) {
         if(result.getStatus() == ITestResult.FAILURE){
-            if(initalCounter<maxCounter)
+            if(initialCounter<maxCounter)
             {
-                initalCounter++;
+                initialCounter++;
                 return true;
             }
 

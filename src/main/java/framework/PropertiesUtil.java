@@ -112,6 +112,18 @@ public class PropertiesUtil {
         public String getListOfTransactions() {
             return getProperty_API("ListOfTransactions");
         }
+
+        public String getAPIKey() {
+            return getProperty_API("APIKey");
+        }
+
+        public int getConnectionTimeout() {
+            return getAPIBasedConfiguration().getInt("ConnectionTimeout", 5000);
+        }
+
+        public int getSocketTimeout() {
+            return getAPIBasedConfiguration().getInt("SocketTimeout", 10000);
+        }
     }
 
 }

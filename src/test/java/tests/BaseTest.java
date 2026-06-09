@@ -4,6 +4,7 @@ import framework.PropertiesUtil;
 import framework.TestUtil;
 import framework.constants.StatusCodes;
 import io.restassured.RestAssured;
+import io.restassured.config.HttpClientConfig;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import net.datafaker.Faker;
@@ -38,18 +39,23 @@ public class BaseTest {
     @BeforeClass
     public void beforeClass() {
 
-        loginSpecBuilder = new LoginSpecBuilder();
         propertiesUtil = new PropertiesUtil();
         testUtil = new TestUtil();
-        accountSpecBuilder=new AccountSpecBuilder(testUtil);
         faker = new Faker();
-        accountResponseSpecBuilder=new AccountResponseSpecBuilder();
-        depositAmountSpecBuilder=new DepositOrWithDrawAmountSpecBuilder(testUtil);
+        accountResponseSpecBuilder = new AccountResponseSpecBuilder();
 
         if(propertiesUtil.getTypeOfAPI().equalsIgnoreCase("Banking"))
         {
-            bankingEndPoints=new PropertiesUtil.BankingEndPoints();
-            RestAssured.baseURI=bankingEndPoints.getBaseURL();
+            bankingEndPoints = new PropertiesUtil.BankingEndPoints();
+            loginSpecBuilder = new LoginSpecBuilder(bankingEndPoints);
+            accountSpecBuilder = new AccountSpecBuilder(testUtil, bankingEndPoints);
+            depositAmountSpecBuilder = new DepositOrWithDrawAmountSpecBuilder(testUtil, bankingEndPoints);
+            RestAssured.baseURI = bankingEndPoints.getBaseURL();
+            RestAssured.config = RestAssured.config().httpClient(
+                    HttpClientConfig.httpClientConfig()
+                            .setParam("http.connection.timeout", bankingEndPoints.getConnectionTimeout())
+                            .setParam("http.socket.timeout", bankingEndPoints.getSocketTimeout())
+            );
             loginToTheAPI();
         }
 

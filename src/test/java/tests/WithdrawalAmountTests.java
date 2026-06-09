@@ -4,7 +4,6 @@ import framework.constants.StatusCodes;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import pojo.request.withdraw.WithdrawAmountRequest;
-import pojo.response.deposit.DepositAmountResponse;
 import pojo.response.withdraw.WithdrawAmountResponse;
 
 import static io.restassured.RestAssured.given;

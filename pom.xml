@@ -26,9 +26,18 @@
         <lombok-annotation>1.18.46</lombok-annotation>
         <commons-lang>3.20.0</commons-lang>
         <commons-configuration>LATEST</commons-configuration>
+        <opencsv-version>LATEST</opencsv-version>
     </properties>
 
     <dependencies>
+
+        <!-- Source: https://mvnrepository.com/artifact/com.opencsv/opencsv -->
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>${opencsv-version}</version>
+            <scope>compile</scope>
+        </dependency>
 
         <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/commons-configuration2 -->
         <dependency>

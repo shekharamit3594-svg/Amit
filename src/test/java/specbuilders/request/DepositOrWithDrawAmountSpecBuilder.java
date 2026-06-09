@@ -1,5 +1,6 @@
 package specbuilders.request;
 
+import framework.PropertiesUtil;
 import framework.TestUtil;
 import io.qameta.allure.restassured.AllureRestAssured;
 import io.restassured.builder.RequestSpecBuilder;
@@ -15,6 +16,7 @@ import pojo.request.RequestPOJO;
 public class DepositOrWithDrawAmountSpecBuilder {
 
     TestUtil testUtil;
+    PropertiesUtil.BankingEndPoints bankingEndPoints;
 
     public RequestSpecification getDepositOrWithdrawAmountSpecBuilder(RequestPOJO... request)
     {
@@ -22,7 +24,7 @@ public class DepositOrWithDrawAmountSpecBuilder {
         RequestSpecBuilder specBuilder = new RequestSpecBuilder();
         specBuilder.setContentType(ContentType.JSON)
                 .addHeader("Authorization","Bearer "+testUtil.getData("AccessToken"))
-                .addHeader("apikey","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFuYWpicXhtcGJtbmRud2Rxc3dxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQyMDA3OTMsImV4cCI6MjA3OTc3Njc5M30.gu96y5-EvK1a1BQWxNvQpJ-8st-fP_zLFsuVVtGif9c")
+                .addHeader("apikey", bankingEndPoints.getAPIKey())
                 .addFilter(new AllureRestAssured());
 
         if(request.length>0)

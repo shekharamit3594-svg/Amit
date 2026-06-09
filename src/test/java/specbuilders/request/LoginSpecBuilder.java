@@ -1,17 +1,25 @@
 package specbuilders.request;
 
+import framework.PropertiesUtil;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import pojo.request.RequestPOJO;
 
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class LoginSpecBuilder {
+
+    PropertiesUtil.BankingEndPoints bankingEndPoints;
 
     public RequestSpecification getLoginRequestSpec(RequestPOJO... request)
     {
         RequestSpecBuilder specBuilder = new RequestSpecBuilder();
         specBuilder.setContentType(ContentType.JSON)
-                .addHeader("apikey","eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFuYWpicXhtcGJtbmRud2Rxc3dxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQyMDA3OTMsImV4cCI6MjA3OTc3Njc5M30.gu96y5-EvK1a1BQWxNvQpJ-8st-fP_zLFsuVVtGif9c");
+                .addHeader("apikey", bankingEndPoints.getAPIKey());
 
         if(request.length > 0)
         {

@@ -3,11 +3,10 @@ package specbuilders.response;
 import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.specification.ResponseSpecification;
-import pojo.request.RequestPOJO;
 
 public class AccountResponseSpecBuilder {
 
-    public ResponseSpecification getAccountResponseSpec(int statusCode, RequestPOJO...request)
+    public ResponseSpecification getAccountResponseSpec(int statusCode)
     {
 
         ResponseSpecBuilder responseBuilder = new ResponseSpecBuilder();

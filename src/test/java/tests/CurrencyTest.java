@@ -1,7 +1,6 @@
 package tests;
 
 import framework.constants.StatusCodes;
-import io.restassured.http.ContentType;
 import org.testng.annotations.Test;
 import pojo.response.currencies.ListOfAllCurrencies;
 
@@ -16,8 +15,7 @@ public class CurrencyTest extends BaseTest {
     public void viewAllCurrencies() {
 
         ListOfAllCurrencies response=given()
-                .contentType(ContentType.JSON)
-                .header("Authorization","Bearer "+testUtil.getData("AccessToken"))
+                .spec(accountSpecBuilder.getAccountSpecBuilder())
         .when()
                 .get(bankingEndPoints.getListOfCurrencies())
         .then()
