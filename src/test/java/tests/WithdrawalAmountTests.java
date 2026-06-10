@@ -13,19 +13,21 @@ public class WithdrawalAmountTests extends BaseTest {
     @Test(description = "Withdraw the Amount", priority = 1)
     public void performWithdrawalOfAmount() {
 
-        WithdrawAmountRequest request = new WithdrawAmountRequest();
+        testUtil.getData_AccountNumbers("Account Numbers").forEach(accountNumber -> {
+            WithdrawAmountRequest request = new WithdrawAmountRequest();
 
-        request.setAccountId(System.getProperty("Account Number"))
-                .setAmount(faker.number().numberBetween(1000, 5000));
+            request.setAccountId(accountNumber)
+                    .setAmount(faker.number().numberBetween(1000, 5000));
 
-        String withdrawAmountMessage = given()
-                .spec(depositAmountSpecBuilder.getDepositOrWithdrawAmountSpecBuilder(request))
-                .when()
-                .post(bankingEndPoints.getWithdrawAmount())
-                .then()
-                .statusCode(StatusCodes.SUCCESS.getStatusCode())
-                .extract().response().as(WithdrawAmountResponse.class).getMessage();
+            String withdrawAmountMessage = given()
+                    .spec(depositAmountSpecBuilder.getDepositOrWithdrawAmountSpecBuilder(request))
+                    .when()
+                    .post(bankingEndPoints.getWithdrawAmount())
+                    .then()
+                    .statusCode(StatusCodes.SUCCESS.getStatusCode())
+                    .extract().response().as(WithdrawAmountResponse.class).getMessage();
 
-        Assert.assertEquals(withdrawAmountMessage, "Withdrawal successful");
+            Assert.assertEquals(withdrawAmountMessage, "Withdrawal successful");
+        });
     }
 }

@@ -1,6 +1,5 @@
 package listeners;
 
-import dataProviders.FetchDataFromCSVFile;
 import org.testng.IAnnotationTransformer;
 import org.testng.annotations.ITestAnnotation;
 

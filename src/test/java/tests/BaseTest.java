@@ -28,19 +28,19 @@ public class BaseTest {
     AccountSpecBuilder accountSpecBuilder;
     AccountResponseSpecBuilder accountResponseSpecBuilder;
     DepositOrWithDrawAmountSpecBuilder depositAmountSpecBuilder;
-    TestUtil testUtil;
+    static TestUtil testUtil;
     Faker faker;
 
     @BeforeSuite
     public void setupOfInformation()
     {
+        testUtil = new TestUtil();
     }
 
     @BeforeClass
     public void beforeClass() {
 
         propertiesUtil = new PropertiesUtil();
-        testUtil = new TestUtil();
         faker = new Faker();
         accountResponseSpecBuilder = new AccountResponseSpecBuilder();
 

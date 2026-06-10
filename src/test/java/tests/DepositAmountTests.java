@@ -13,19 +13,21 @@ public class DepositAmountTests extends BaseTest {
     @Test(description = "Depositing the Amount", priority = 1)
     public void performDepositAmount() {
 
-        DepositAmountRequest request = new DepositAmountRequest();
+        testUtil.getData_AccountNumbers("Account Numbers").forEach(accountNumber -> {
+            DepositAmountRequest request = new DepositAmountRequest();
 
-        request.setAccountId(System.getProperty("Account Number"))
-                .setAmount(faker.number().numberBetween(1000, 5000));
+            request.setAccountId(accountNumber)
+                    .setAmount(faker.number().numberBetween(1000, 5000));
 
-        String depositAmountMessage = given()
-                .spec(depositAmountSpecBuilder.getDepositOrWithdrawAmountSpecBuilder(request))
-                .when()
-                .post(bankingEndPoints.getDepositAmount())
-                .then()
-                .statusCode(StatusCodes.SUCCESS.getStatusCode())
-                .extract().response().as(DepositAmountResponse.class).getMessage();
+            String depositAmountMessage = given()
+                    .spec(depositAmountSpecBuilder.getDepositOrWithdrawAmountSpecBuilder(request))
+                    .when()
+                    .post(bankingEndPoints.getDepositAmount())
+                    .then()
+                    .statusCode(StatusCodes.SUCCESS.getStatusCode())
+                    .extract().response().as(DepositAmountResponse.class).getMessage();
 
-        Assert.assertEquals(depositAmountMessage, "Deposit successful");
+            Assert.assertEquals(depositAmountMessage, "Deposit successful");
+        });
     }
 }

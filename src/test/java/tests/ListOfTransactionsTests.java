@@ -12,17 +12,19 @@ public class ListOfTransactionsTests extends BaseTest {
     @Test(description = "Displaying the List Of Transactions",priority = 1)
     public void displayListOfTransactions() {
 
-        ListOfTransactionsResponse response=given()
-                .spec(depositAmountSpecBuilder.getDepositOrWithdrawAmountSpecBuilder())
-                .queryParam("account_id",System.getProperty("Account Number"))
-                .queryParam("page",1)
-                .queryParam("limit",20)
-        .when()
-                .get(bankingEndPoints.getListOfTransactions())
-        .then()
-                .statusCode(StatusCodes.SUCCESS.getStatusCode())
-                .extract().response().as(ListOfTransactionsResponse.class);
+        testUtil.getData_AccountNumbers("Account Numbers").forEach(accountNumber -> {
+            ListOfTransactionsResponse response = given()
+                    .spec(depositAmountSpecBuilder.getDepositOrWithdrawAmountSpecBuilder())
+                    .queryParam("account_id", accountNumber)
+                    .queryParam("page", 1)
+                    .queryParam("limit", 20)
+                    .when()
+                    .get(bankingEndPoints.getListOfTransactions())
+                    .then()
+                    .statusCode(StatusCodes.SUCCESS.getStatusCode())
+                    .extract().response().as(ListOfTransactionsResponse.class);
 
-        Assert.assertTrue(response.getSuccess());
+            Assert.assertTrue(response.getSuccess());
+        });
     }
 }

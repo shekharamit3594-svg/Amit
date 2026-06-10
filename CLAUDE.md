@@ -20,7 +20,6 @@ mvn clean test -DaccessToken="Bearer <token>"
 
 # Run a single test class
 mvn test -Dtest="tests.AccountsTest"
-mvn test -Dtest="tests.may29th2026.UnderstandingLoggingFilters"
 
 # Serve Allure report after a test run (requires Allure CLI)
 allure serve allure-results
@@ -32,12 +31,12 @@ allure serve allure-results
 
 | Location | Purpose |
 |---|---|
-| `src/main/java/framework/` | `PropertiesUtil` (two-level config), `TestUtil` (in-memory data store), `PathUtils` (Base64), `constants/StatusCodes` (HTTP status enum) |
+| `src/main/java/framework/` | `PropertiesUtil` (two-level config), `TestUtil` (in-memory data store), `PathUtils` (Base64 encode/decode + resource path helpers), `GenericExceptions` (Lombok `@StandardException` base), `constants/StatusCodes` (HTTP status enum) |
 | `src/test/java/pojo/` | Centralised request/response POJOs, grouped by domain (`account/`, `deposit/`, `withdraw/`, `login/`, etc.) |
 | `src/test/java/specbuilders/` | `request/` spec builders (`LoginSpecBuilder`, `AccountSpecBuilder`, `DepositOrWithDrawAmountSpecBuilder`); `response/` spec builders (`AccountResponseSpecBuilder`) |
 | `src/test/java/listeners/` | `RetryAnalyser` (3 retries on failure), `AnnotationTransformers` (injects retry + "Regression" group globally) |
 | `src/test/java/tests/` | Production-style test classes (`BaseTest`, `AccountsTest`, `CurrencyTest`, `DepositAmountTests`, `WithdrawalAmountTests`, `ListOfTransactionsTests`) |
-| `src/test/java/tests/may*th2026/` | Date-stamped training sessions (exploration history; kept for reference) |
+| `src/test/java/dataProviders/` | `FetchDataFromCSVFile` — TestNG `@DataProvider` that reads `src/test/resources/Test_Data/banking_details.csv` and returns `Iterator<Map<String,String>>`; `ReadingDataFromCSVFile` — standalone exploration scratch class |
 
 ### Two-level configuration
 
@@ -92,22 +91,6 @@ Later classes depend on `System.setProperty` values set by earlier ones; running
 ### POJO strategy
 
 All POJOs extend or implement `pojo.request.RequestPOJO` (marker type) to allow spec builders to accept any request type via varargs. Request POJOs use Lombok `@Getter`/`@Setter`/`@Accessors(chain=true)` for fluent building and `@JsonProperty` for snake_case JSON mapping. Response POJOs mirror the exact response shape, often with a nested `Data` class.
-
-### Session-based historical packages
-
-| Session | Key concepts introduced |
-|---|---|
-| `may18th–19th2026` | First HTTP methods exploration |
-| `may20th2025` | Original `BaseTest` + first full CRUD suite |
-| `may25th2026` | POJO serialization/deserialization + `RequestData` interface |
-| `may26th2026` | Hamcrest matchers + first `SpecBuilders` |
-| `may27th2026` | Query parameters, `Map`-based multi-param, typed deserialization |
-| `may28th2026` | File-based logging via `RequestLoggingFilter`/`ResponseLoggingFilter` |
-| `may29th2026` | Form parameters (`application/x-www-form-urlencoded`), centralised log stream |
-
-Log file written by session tests: `src/test/resources/logs/api-logs.log` (append mode).
-
-Form-params note: the `/create-account` Supabase edge function uppercases string values on the form-data path; use currency codes (e.g. `INR`) rather than full names.
 
 ### CI / GitHub Actions
 
