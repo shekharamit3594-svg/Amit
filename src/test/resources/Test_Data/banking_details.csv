@@ -1,3 +1,3 @@
 accounttype,accountholdername,initialbalance,currency,email,phone,city,addressline1,addressline2,state,zipcode,country
-personal,Herb Jones,4000,USD,jones.herb@nba.com,98753882778,California,California Street 1,California Main Road,LA,948892,USA
-business,Trey Murphy III,4500,USD,murphy3@nba.com,72858929945,Angel Street,AngelStreet 1,AngelStreet2,LA,2859958,USA
+personal,Kevin Durant,4000,USD,durnat@nba.com,98753882778,California,California Street 1,California Main Road,LA,948892,USA
+business,Fred Vanvleet,4500,USD,vanvleet@nba.com,72858929945,Angel Street,AngelStreet 1,AngelStreet2,LA,2859958,USA
