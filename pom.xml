@@ -136,7 +136,7 @@
                         <annotationProcessorPath>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>${lombok-annotation}</version>
+                            <version>1.18.46</version>
                         </annotationProcessorPath>
                     </annotationProcessorPaths>
 
