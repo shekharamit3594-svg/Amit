@@ -1,166 +1,56 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.trainings.automation</groupId>
-    <artifactId>evening8to9AutomationTesting</artifactId>
-
-    <!-- SNAPSHOT version is used to indicate that the current version of the project is under development and may change in the future-->
-    <!-- Release version is used to indicate that the current version of the project is stable and ready for production use-->
+    <groupId>com.karateConcepts</groupId>
+    <artifactId>KarateConcepts</artifactId>
     <version>1.0-SNAPSHOT</version>
-
-    <name>evening8to9AutomationTesting</name>
-    <url>http://www.example.com</url>
+    <packaging>jar</packaging>
 
     <properties>
-        <!--By Default when we create a maven project, maven will use Java 1.7 as default compiler version
-        we need to update the JDK as per the required because stopped before JDK 8-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <testng-version>7.12.0</testng-version>
-        <rest-assured-version>6.0.0</rest-assured-version>
-        <datafaker-version>2.5.4</datafaker-version>
-        <allure-version>2.34.0</allure-version>
-        <jackson-databind>3.1.3</jackson-databind>
-        <lombok-annotation>1.18.46</lombok-annotation>
-        <commons-lang>3.20.0</commons-lang>
-        <commons-configuration>LATEST</commons-configuration>
-        <opencsv-version>LATEST</opencsv-version>
-        <google-guava>LATEST</google-guava>
+        <maven.compiler.version>3.14.0</maven.compiler.version>
+        <maven.surefire.version>3.5.3</maven.surefire.version>
+        <karate.version>1.5.0</karate.version>
     </properties>
 
     <dependencies>
-
-        <!-- Source: https://mvnrepository.com/artifact/com.google.guava/guava -->
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${google-guava}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <!-- Source: https://mvnrepository.com/artifact/com.opencsv/opencsv -->
-        <dependency>
-            <groupId>com.opencsv</groupId>
-            <artifactId>opencsv</artifactId>
-            <version>${opencsv-version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/commons-configuration2 -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-configuration2</artifactId>
-            <version>${commons-configuration}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${commons-lang}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <!-- Source: https://mvnrepository.com/artifact/org.projectlombok/lombok -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok-annotation}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <!-- Source: https://mvnrepository.com/artifact/tools.jackson.core/jackson-databind -->
-        <dependency>
-            <groupId>tools.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson-databind}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <!-- Source: https://mvnrepository.com/artifact/io.qameta.allure/allure-testng -->
-        <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-testng</artifactId>
-            <version>${allure-version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <!-- Source: https://mvnrepository.com/artifact/io.qameta.allure/allure-rest-assured -->
-        <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-rest-assured</artifactId>
-            <version>${allure-version}</version>
-            <scope>compile</scope>
-        </dependency>
-
-        <!-- Source: https://mvnrepository.com/artifact/org.testng/testng -->
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>${testng-version}</version>
-            <!-- when we mention the scope as test, it means that this dependency will only be used during the testing phase of the project and will not be included in the final build artifact.-->
-            <!-- we can use this library only in src/test/java folder and not in src/main/java folder-->
+            <groupId>io.karatelabs</groupId>
+            <artifactId>karate-junit5</artifactId>
+            <version>${karate.version}</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- Source: https://mvnrepository.com/artifact/io.rest-assured/rest-assured -->
-        <dependency>
-            <groupId>io.rest-assured</groupId>
-            <artifactId>rest-assured</artifactId>
-            <version>${rest-assured-version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- Source: https://mvnrepository.com/artifact/net.datafaker/datafaker -->
-        <dependency>
-            <groupId>net.datafaker</groupId>
-            <artifactId>datafaker</artifactId>
-            <version>${datafaker-version}</version>
-            <scope>compile</scope>
-        </dependency>
-
     </dependencies>
 
     <build>
+        <testResources>
+            <testResource>
+                <directory>src/test/java</directory>
+                <excludes>
+                    <exclude>**/*.java</exclude>
+                </excludes>
+            </testResource>
+        </testResources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.version}</version>
                 <configuration>
+                    <encoding>UTF-8</encoding>
                     <release>25</release>
-
-                    <annotationProcessorPaths>
-                        <annotationProcessorPath>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>1.18.46</version>
-                        </annotationProcessorPath>
-                    </annotationProcessorPaths>
-
                 </configuration>
             </plugin>
-
-            <!-- Source: https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.5.5</version>
-
+                <version>${maven.surefire.version}</version>
                 <configuration>
-                    <!--To Enable the preview features at the time of code execution-->
-                    <!--<argLine>&#45;&#45;preview</argLine>-->
-
-                    <suiteXmlFiles>
-                        <suiteXmlFile>testng.xml</suiteXmlFile>
-                    </suiteXmlFiles>
+                    <argLine>-Dfile.encoding=UTF-8</argLine>
                 </configuration>
-
             </plugin>
         </plugins>
     </build>
-
 
 </project>
