@@ -16,4 +16,32 @@ public class GoRestRunner {
         return Karate.run("PerformingQueryParameters.feature").relativeTo(getClass());
     }
 
+    @Karate.Test
+    Karate dataDrivenUserCreation() {
+        //Run the data-driven feature that reads test data from a CSV file
+        return Karate.run("DataDrivenUserCreation.feature").relativeTo(getClass());
+    }
+
+    @Karate.Test
+    Karate understandingKarateVariables() {
+        //Run all variable concept scenarios — filter by tag to run a specific concept
+        return Karate.run("UnderstandingKarateVariables.feature")
+                .tags("@JSFunctions")
+                .relativeTo(getClass());
+    }
+
+    @Karate.Test
+    Karate dataDrivenExamples() {
+        //Run all four Examples patterns — use tags to isolate a specific pattern or dataset
+        return Karate.run("DataDrivenExamples.feature")
+                .tags("@JSONFileExamples")
+                .relativeTo(getClass());
+    }
+
+    @Karate.Test
+    Karate putOperationUsingPostId() {
+        //Run the PUT operation that uses the ID captured from PostOperation.feature
+        return Karate.run("PutOperationUsingPostId.feature").relativeTo(getClass());
+    }
+
 }
