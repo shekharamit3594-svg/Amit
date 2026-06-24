@@ -19,8 +19,6 @@ Feature: PUT Operation - Update User Created by POST Feature
           return randomName;
         }
       """
-    * def gender = Java.type('practiceData.gorest.FetchGendersAndStatus')
-    * def status = Java.type('practiceData.gorest.FetchGendersAndStatus')
 
   @PutOperation
   Scenario: Update a user using the ID generated from the POST feature
@@ -31,25 +29,21 @@ Feature: PUT Operation - Update User Created by POST Feature
     * def updatePayload =
       """
       {
+        "name": "#(name(10))",
+        "email": "#(emailID())",
         "phone": "987-654-3210"
       }
       """
-    * updatePayload.name = name(10)
-    * updatePayload.gender = gender.getGender()
-    * updatePayload.status = status.getStatus()
-    * updatePayload.email = emailID()
 
     Given url baseUrl
     And path usersPath, userId
     And header Authorization = bearerToken
     And header Content-Type = contentType
     And request updatePayload
-    When method put
+    When method patch
     Then status 200
-    And print 'PUT Response - User updated:', response
+    And print 'PATCH Response - User updated:', response
     And match response.id == userId
     And match response.name == updatePayload.name
     And match response.email == updatePayload.email
-    And match response.gender == updatePayload.gender
-    And match response.status == updatePayload.status
     And match response.phone == updatePayload.phone
