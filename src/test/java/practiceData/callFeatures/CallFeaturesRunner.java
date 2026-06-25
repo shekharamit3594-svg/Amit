@@ -15,6 +15,8 @@ public class CallFeaturesRunner {
     @Karate.Test
     Karate callonceSharedAuth() {
         // Demonstrates 7.5 callonce, 7.6 login as reusable feature, 7.7 shared auth token
-        return Karate.run("CallonceSharedAuth.feature").relativeTo(getClass());
+        return Karate.run("CallonceSharedAuth.feature")
+                .tags("@CreateWithSharedToken")
+                .relativeTo(getClass());
     }
 }

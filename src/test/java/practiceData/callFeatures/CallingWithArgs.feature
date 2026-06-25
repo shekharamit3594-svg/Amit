@@ -102,7 +102,7 @@ Feature: Calling Feature Files with Arguments — Module 7.4
 
 
     # Step 1 — Create user via the helper and capture the returned userId
-    * def createResult = call read('CreateUserHelper.feature') { name: '<User_Name>', email: '<User_Email>', gender: 'male', status: 'active' }
+    * def createResult = call read('CreateUserHelper.feature') { name: '<User_Name>', email: '<User_Email>', gender: '<Gender>', status: '<Status>' }
     * def userId = createResult.userId
     * print 'Created user — ID:', userId
 
@@ -126,7 +126,9 @@ Feature: Calling Feature Files with Arguments — Module 7.4
     And match response.status == 'inactive'
 
     Examples:
-      | User_Name | User_Email                            |
-      | #(name()) | 'args.ex1.' + #(name()) + '@example.com' |
-      | #(name()) | 'args.ex2.' + #(name()) + '@example.com' |
+      | User_Name | User_Email                               | Gender | Status   |
+      | #(name()) | #("args.ex1." + name() + "@example.com") | male   | active   |
+      | #(name()) | #("args.ex2." + name() + "@example.com") | male   | inactive |
+      | #(name()) | #("args.ex3." + name() + "@example.com") | female | active   |
+
 

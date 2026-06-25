@@ -43,13 +43,13 @@ Feature: callonce — Shared Auth Token Across Scenarios — Module 7.5 / 7.6 / 
     # AuthSetup.feature was NOT re-executed.
     * print 'Scenario 2 — same token (from cache):', token
 
-    * def randomSuffix =
+    * def randomName =
       """
       function() {
         return Math.random().toString(36).substring(2, 8);
       }
       """
-    * def suffix = call randomSuffix
+    * def suffix = call randomName
     * def email  = 'callonce.user1.' + suffix + '@example.com'
 
     Given url baseUrl
@@ -57,11 +57,14 @@ Feature: callonce — Shared Auth Token Across Scenarios — Module 7.5 / 7.6 / 
     # Use the shared token — the same object that Scenario 1 received from callonce
     And header Authorization = token
     And header Content-Type = contentType
-    And request { name: 'Callonce User 1', email: '#(email)', gender: 'male', status: 'active' }
+    And request { name: '#(suffix)', email: '#(email)', gender: 'male', status: 'active' }
     When method post
     Then status 201
     And print 'Created user with shared token. ID:', response.id
     And match response.id == '#number'
+    And match response.id != 0
+    #Checking if the response id exists or not in the response
+    And match response.id == '#present'
 
 
   @CallonceAuth @SecondUserSameToken

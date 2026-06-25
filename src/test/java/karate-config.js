@@ -1,5 +1,5 @@
 function fn() {
-      var env = karate.env; // get system property 'karate.env'
+      let env = karate.env; // get system property 'karate.env'
   karate.log('karate.env system property was:', env);
   if (!env) {
     env = 'dev';
@@ -13,12 +13,40 @@ function fn() {
     //Retry configuration
   karate.configure('retry', {
     count: 3,
-    interval: 1000
+    interval: 10000
   });
 
-  var config = {
+  // ── UI Driver Toggle ──────────────────────────────────────────────────────────
+  // Controls WHERE the browser runs — independent of karate.env (API environment).
+  //
+  //   Local  (default): mvn test
+  //   Remote (Grid)   : mvn test -Dwebdriver.remote=true
+  //   Custom Grid URL : mvn test -Dwebdriver.remote=true -Dgrid.url=http://host:4444
+  //
+  // karate.env still controls the API base URL / tokens (dev, e2e, etc.)
+  // These two settings are orthogonal — any combination is valid.
+  let isRemote = karate.properties['webdriver.remote'] === 'true';
+  let gridUrl  = karate.properties['grid.url'] || 'http://selenium-hub:4444';
+
+  // ── Auto-screenshot on failure ─────────────────────────────────────────────────
+  // afterScenario runs after every scenario (API and UI).
+  // If the scenario failed, karate.info.errorMessage is non-null.
+  // screenshot() is wrapped in try/catch because it throws when no browser session
+  // is active (e.g. pure API scenarios). The image is embedded in the HTML report.
+  karate.configure('afterScenario', function() {
+    if (karate.info.errorMessage) {
+      try { karate.embed(karate.screenshot(), 'image/png') } catch(e) {}
+    }
+  });
+
+  let driverConfig = isRemote
+    ? { type: 'chrome', timeout: 20000, webDriverUrl: gridUrl + '/wd/hub' }
+    : { type: 'chrome', timeout: 20000, addOptions: ['--no-sandbox', '--disable-dev-shm-usage'] };
+
+  let config = {
     env: env,
-    myVarName: 'someValue'
+    myVarName: 'someValue',
+    driverConfig: driverConfig
   }
 
   if (env == 'dev') {
