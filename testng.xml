@@ -1,19 +1,107 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="Banking API">
 
-    <listeners>
-        <listener class-name="listeners.AnnotationTransformers"></listener>
-    </listeners>
+<!--
+    ═══════════════════════════════════════════════════════════════════════════
+    Karate Automation Suite — Runner Reference
+    ═══════════════════════════════════════════════════════════════════════════
+    NOTE: This project uses Karate + JUnit 5 (io.karatelabs:karate-junit5:1.5.0).
+    JUnit 5 tests are NOT driven by testng.xml at runtime.
 
-    <test verbose="2" preserve-order="true"
-          name="Banking Related Scenarios">
+    This file is a REFERENCE that documents:
+      • Every runner class and the feature files it covers
+      • The logical grouping of tests by module
+      • The Maven commands to run each group in isolation
+
+    Maven commands:
+      All runners   : mvn test
+      Single runner : mvn test -Dtest="practiceData.gorest.GoRestRunner"
+      By tag        : mvn test -Dkarate.options="--tags @SmokeTest"
+      Docker (all)  : docker run --rm <image>
+    ═══════════════════════════════════════════════════════════════════════════
+-->
+
+<suite name="Karate Automation Suite" verbose="2" parallel="none">
+
+    <!-- ─────────────────────────────────────────────────────────────────────
+         GROUP 1 — Sample / Syntax Scenarios
+         Runner   : sampleRunner.SampleRunner
+         Features : SyntaxesInKarateFramework.feature
+                    users.feature  (JSONPlaceholder smoke tests)
+         Run      : mvn test -Dtest="sampleRunner.SampleRunner"
+         ───────────────────────────────────────────────────────────────────── -->
+    <test name="Sample and Syntax Scenarios" preserve-order="true">
         <classes>
-            <class name="tests.CurrencyTest"/>
-            <class name="tests.AccountsTest"></class>
-            <class name="tests.DepositAmountTests"></class>
-            <class name="tests.WithdrawalAmountTests"></class>
-            <class name="tests.ListOfTransactionsTests"></class>
+            <class name="sampleRunner.SampleRunner"/>
         </classes>
     </test>
+
+    <!-- ─────────────────────────────────────────────────────────────────────
+         GROUP 2 — GoRest API Tests (CRUD, Data-Driven, Variables)
+         Runner   : practiceData.gorest.GoRestRunner
+         Features : GoRestFeature.feature
+                    PostOperation.feature
+                    PutOperationUsingPostId.feature
+                    PerformingQueryParameters.feature
+                    UnderstandingKarateVariables.feature
+                    DataDrivenUserCreation.feature
+                    DataDrivenExamples.feature
+         Run      : mvn test -Dtest="practiceData.gorest.GoRestRunner"
+         Tags     : @DataDriven  @JSFunctions  @ResponseExtraction
+                    @BasicTypes  @TableKeyword  @SetAndRemove
+         ───────────────────────────────────────────────────────────────────── -->
+    <test name="GoRest API — CRUD, Variables and Data-Driven" preserve-order="true">
+        <classes>
+            <class name="practiceData.gorest.GoRestRunner"/>
+        </classes>
+    </test>
+
+    <!-- ─────────────────────────────────────────────────────────────────────
+         GROUP 3 — HTTP Methods (PUT vs PATCH, DELETE)
+         Runner   : practiceData.httpMethods.HttpMethodsRunner
+         Features : PutVsPatch.feature
+                    PatchOperation.feature
+                    DeleteOperation.feature
+         Run      : mvn test -Dtest="practiceData.httpMethods.HttpMethodsRunner"
+         ───────────────────────────────────────────────────────────────────── -->
+    <test name="HTTP Methods — PUT, PATCH, DELETE" preserve-order="true">
+        <classes>
+            <class name="practiceData.httpMethods.HttpMethodsRunner"/>
+        </classes>
+    </test>
+
+    <!-- ─────────────────────────────────────────────────────────────────────
+         GROUP 4 — Call Features (call, callonce, shared auth, args)
+         Runner   : practiceData.callFeatures.CallFeaturesRunner
+         Features : CallingWithArgs.feature
+                    CallonceSharedAuth.feature
+                    AuthSetup.feature         (called helper — not run directly)
+                    CreateUserHelper.feature  (called helper — not run directly)
+         Run      : mvn test -Dtest="practiceData.callFeatures.CallFeaturesRunner"
+         Tags     : @CallonceAuth  @CallWithArgs
+         ───────────────────────────────────────────────────────────────────── -->
+    <test name="Call Features — call, callonce and Shared Auth" preserve-order="true">
+        <classes>
+            <class name="practiceData.callFeatures.CallFeaturesRunner"/>
+        </classes>
+    </test>
+
+    <!-- ─────────────────────────────────────────────────────────────────────
+         GROUP 5 — Cricbuzz UI Automation (Chrome via Xvfb in Docker)
+         Runner   : uiAutomation.cricbuzz.CricbuzzRunner
+         Features : CricbuzzHomePage.feature    — driver config, title, nav, logo
+                    CricbuzzSearch.feature      — click, input, clear, Key.*
+                    CricbuzzLiveScores.feature  — scroll, script(), waitFor chain
+                    CricbuzzSchedule.feature    — tab switching, waitForUrl
+                    CricbuzzRankings.feature    — table data, JS extraction
+         Run      : mvn test -Dtest="uiAutomation.cricbuzz.CricbuzzRunner"
+         Tags     : @HomePageVerification  @SearchFunctionality
+                    @LiveScores  @ScheduleNavigation  @RankingsNavigation
+         ───────────────────────────────────────────────────────────────────── -->
+    <test name="Cricbuzz UI Automation" preserve-order="true">
+        <classes>
+            <class name="uiAutomation.cricbuzz.CricbuzzRunner"/>
+        </classes>
+    </test>
+
 </suite>

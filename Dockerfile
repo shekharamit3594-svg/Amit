@@ -1,19 +1,32 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# Karate Automation Framework — Docker Image
+# Base : maven:3.9-eclipse-temurin-25 (Ubuntu Noble)
+# Tests: JUnit 5 via karate-junit5:1.5.0
+# UI   : Browser is NOT installed here — connect to an external Selenium Grid.
+#        Use docker-compose.yml to start the Grid + this runner together.
+# ──────────────────────────────────────────────────────────────────────────────
 FROM maven:3.9-eclipse-temurin-25
 
 WORKDIR /workspace
 
-# Copy Maven metadata first so dependency downloads are cached between source edits.
-COPY pom.xml testng.xml ./
-
-# Download project dependencies into the image so the later build can run offline.
+# ── 1. Maven dependency cache ──────────────────────────────────────────────────
+# pom.xml is copied alone so Docker reuses this layer on source-only changes.
+COPY pom.xml ./
 RUN mvn -B dependency:go-offline
-RUN mvn -B dependency:get -Dartifact=org.apache.maven.surefire:surefire-testng:3.5.5
 
-COPY Config.properties sample_data.csv ./
+# ── 2. Project sources ─────────────────────────────────────────────────────────
+COPY testng.xml Config.properties ./
 COPY src ./src
 
-# Compile the framework during image building, but do not run API tests here.
-RUN mvn -B -o -DskipTests test
+# ── 3. Compile test sources ────────────────────────────────────────────────────
+RUN mvn -B -o test-compile
 
-# Run the TestNG suite when the container starts.
-CMD ["mvn", "-o", "test", "-Dsurefire.suiteXmlFiles=testng.xml"]
+# ── 4. Default command ─────────────────────────────────────────────────────────
+# Runs all five runners against the dev API environment, local Chrome mode.
+# docker-compose.yml overrides this with -Dwebdriver.remote=true so Karate
+# connects to the Selenium Grid hub instead of looking for a local browser.
+#
+# Override examples:
+#   docker run <image> mvn -o test -Dtest="practiceData.gorest.GoRestRunner"
+#   docker run <image> mvn -o test -Dwebdriver.remote=true -Dgrid.url=http://host:4444
+CMD ["mvn", "clean", "test", "-Dkarate.env=dev"]
