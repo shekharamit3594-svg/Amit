@@ -1,0 +1,39 @@
+# Maven build output
+target/
+
+# Test and report output
+allure-results/
+allure-report/
+surefire-reports/
+failsafe-reports/
+test-output/
+
+# Java artifacts
+*.class
+*.jar
+*.war
+*.ear
+
+# IDE/editor files
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
+*.swo
+
+# Local environment files
+.env
+.env.*
+!.env.example
+*.md
