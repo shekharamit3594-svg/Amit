@@ -55,15 +55,12 @@ public class ContinuationOfWindowsSwitchingAndHandling {
     public void switchToMultipleWindowsAndTabs()
     {
         seleniumUtils.launchApplications().launchApplication("https://www.google.com");
-        //String googelHandle=driver.getWindowHandle(); //Gets the unique reference number for the window/tab launched
 
         seleniumUtils.launchApplications().switchToNewTab("https://www.cricbuzz.com"); //Both the applications will be launched in the first window
 
         seleniumUtils.launchApplications().switchToNewWindow("https://www.youtube.com");
-        //String youtubeHandle=driver.getWindowHandle();
 
         seleniumUtils.launchApplications().switchToNewTab("https://www.snapchat.com"); //Both the applications will be launched in the second window
-        String snapHandle=driver.getWindowHandle();
 
         seleniumUtils.launchApplications().switchToNewWindow("https://www.instagram.com"); //This will be launched in the third window
 
