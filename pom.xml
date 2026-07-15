@@ -2,8 +2,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.karateConcepts</groupId>
-    <artifactId>KarateConcepts</artifactId>
+    <groupId>com.SeleniumConcepts</groupId>
+    <artifactId>SeleniumConcepts</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -11,163 +11,82 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.version>3.14.0</maven.compiler.version>
         <maven.surefire.version>3.5.3</maven.surefire.version>
-        <karate.version>1.5.0</karate.version>
-        <allure.version>2.27.0</allure.version>
-        <aspectj.version>1.9.22</aspectj.version>
-        <!-- Performance Testing — Gatling + Scala -->
-        <gatling.version>3.9.5</gatling.version>
-        <scala.version>2.13.12</scala.version>
-        <gatling.maven.plugin.version>4.6.0</gatling.maven.plugin.version>
-        <scala.maven.plugin.version>4.9.0</scala.maven.plugin.version>
+
+        <selenium-version>LATEST</selenium-version>
+        <testng-version>7.12.0</testng-version>
+        <webdrivermanager-version>6.3.4</webdrivermanager-version>
+        <lombok-version>LATEST</lombok-version>
     </properties>
 
     <dependencies>
+
+        <!-- Source: https://mvnrepository.com/artifact/org.projectlombok/lombok -->
         <dependency>
-            <groupId>io.karatelabs</groupId>
-            <artifactId>karate-junit5</artifactId>
-            <version>${karate.version}</version>
-            <scope>test</scope>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok-version}</version>
+            <scope>compile</scope>
         </dependency>
+
+        <!-- Source: https://mvnrepository.com/artifact/io.github.bonigarcia/webdrivermanager -->
         <dependency>
-            <groupId>io.qameta.allure</groupId>
-            <artifactId>allure-junit5</artifactId>
-            <version>${allure.version}</version>
-            <scope>test</scope>
+            <groupId>io.github.bonigarcia</groupId>
+            <artifactId>webdrivermanager</artifactId>
+            <version>6.3.4</version>
+            <scope>compile</scope>
         </dependency>
+
+        <!-- Source: https://mvnrepository.com/artifact/org.testng/testng -->
         <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjweaver</artifactId>
-            <version>${aspectj.version}</version>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng-version}</version>
             <scope>test</scope>
         </dependency>
 
-        <!-- ── Performance Testing (Karate-Gatling) ─────────────────────────────
-             karate-gatling bridges Karate feature files into Gatling simulations.
-             Each virtual user in Gatling runs a Karate scenario, so existing
-             feature files need zero changes to become load-test scripts.
-             ──────────────────────────────────────────────────────────────────── -->
+        <!-- Source: https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-chrome-driver -->
         <dependency>
-            <groupId>io.karatelabs</groupId>
-            <artifactId>karate-gatling</artifactId>
-            <version>${karate.version}</version>
-            <scope>test</scope>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-chrome-driver</artifactId>
+            <version>${selenium-version}</version>
+            <scope>compile</scope>
         </dependency>
-        <!-- Scala standard library — required by all Gatling simulation classes -->
+
+        <!-- Source: https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-firefox-driver -->
         <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-            <version>${scala.version}</version>
-            <scope>test</scope>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-firefox-driver</artifactId>
+            <version>${selenium-version}</version>
+            <scope>compile</scope>
         </dependency>
-        <!-- Gatling core + highcharts HTML report generation -->
+
+        <!-- Source: https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-firefox-driver -->
         <dependency>
-            <groupId>io.gatling.highcharts</groupId>
-            <artifactId>gatling-charts-highcharts</artifactId>
-            <version>${gatling.version}</version>
-            <scope>test</scope>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-safari-driver</artifactId>
+            <version>${selenium-version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- Source: https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-firefox-driver -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-edge-driver</artifactId>
+            <version>${selenium-version}</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
     <build>
-        <testResources>
-            <testResource>
-                <directory>src/test/java</directory>
-                <excludes>
-                    <exclude>**/*.java</exclude>
-                </excludes>
-            </testResource>
-        </testResources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven.compiler.version}</version>
                 <configuration>
-                    <encoding>UTF-8</encoding>
-                    <release>25</release>
+                    <source>20</source>
+                    <target>20</target>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven.surefire.version}</version>
-                <configuration>
-                    <argLine>
-                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
-                        -Dfile.encoding=UTF-8
-                    </argLine>
-                    <!-- Karate runner classes do not match Surefire's default name
-                         patterns (*Test, Test*, *Tests, *TestCase), so they must be
-                         listed explicitly here. mvn test now discovers all five runners
-                         without needing -Dtest=... on the command line. -->
-                    <includes>
-                        <include>sampleRunner/SampleRunner.java</include>
-                        <include>practiceData/gorest/GoRestRunner.java</include>
-                        <include>practiceData/httpMethods/HttpMethodsRunner.java</include>
-                        <include>practiceData/callFeatures/CallFeaturesRunner.java</include>
-                        <include>uiAutomation/cricbuzz/CricbuzzRunner.java</include>
-                        <include>uiAutomation/cricbuzz/CricbuzzParallelRunner.java</include>
-                        <include>uiAutomation/cricbuzzPOM/CricbuzzPOMRunner.java</include>
-                        <!-- PT-RUN: Karate built-in parallel runner (no Gatling needed) -->
-                        <include>performanceTesting/PerformanceRunner.java</include>
-                    </includes>
-                </configuration>
-            </plugin>
-            <!-- ── Scala compiler — compiles src/test/scala/**/*.scala ──────────── -->
-            <plugin>
-                <groupId>net.alchim31.maven</groupId>
-                <artifactId>scala-maven-plugin</artifactId>
-                <version>${scala.maven.plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>scala-test-compile</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <scalaVersion>${scala.version}</scalaVersion>
-                </configuration>
-            </plugin>
-
-            <!-- ── Gatling Maven Plugin — runs Scala simulations ─────────────────
-                 Usage:
-                   # Run a specific simulation
-                   mvn gatling:test -Dgatling.simulationClass=performanceTesting.simulations.BaselineSimulation
-                   # Run all simulations
-                   mvn gatling:test
-                 Reports land in target/gatling/<simulation-name>/index.html
-                 ──────────────────────────────────────────────────────────────── -->
-            <plugin>
-                <groupId>io.gatling</groupId>
-                <artifactId>gatling-maven-plugin</artifactId>
-                <version>${gatling.maven.plugin.version}</version>
-                <configuration>
-                    <simulationsFolder>src/test/scala</simulationsFolder>
-                    <resultsFolder>${project.basedir}/target/gatling</resultsFolder>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>io.qameta.allure</groupId>
-                <artifactId>allure-maven</artifactId>
-                <version>2.12.0</version>
-                <configuration>
-                    <reportVersion>${allure.version}</reportVersion>
-                    <resultsDirectory>${project.basedir}/allure-results</resultsDirectory>
-                    <reportDirectory>${project.basedir}/allure-report</reportDirectory>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>allure-report</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
