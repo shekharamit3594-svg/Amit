@@ -36,28 +36,28 @@ public class WindowsSwitchingAndHandling {
         //Open a new tab --> Selenium 4 Function
 //        driver.switchTo().newWindow(WindowType.TAB);
 //        driver.get("https://www.amazon.com");
-        seleniumUtils.launchApplications().switchToNewTab("https://www.amazon.com");
+        seleniumUtils.launchApplications().launchNewTab("https://www.amazon.com");
 
 
 //        //We are launching multiple tabs at a time
 //        driver.switchTo().newWindow(WindowType.TAB);
 //        driver.get("https://www.youtube.com");
-        seleniumUtils.launchApplications().switchToNewTab("https://www.youtube.com");
+        seleniumUtils.launchApplications().launchNewTab("https://www.youtube.com");
 
 //        driver.switchTo().newWindow(WindowType.TAB);
 //        driver.get("https://www.gmail.com");
 
-        seleniumUtils.launchApplications().switchToNewTab("https://www.gmail.com");
+        seleniumUtils.launchApplications().launchNewTab("https://www.gmail.com");
 
 //        driver.switchTo().newWindow(WindowType.TAB);
 //        driver.get("https://www.redbus.com");
 
-        seleniumUtils.launchApplications().switchToNewTab("https://www.redbus.com");
+        seleniumUtils.launchApplications().launchNewTab("https://www.redbus.com");
 
 //        driver.switchTo().newWindow(WindowType.TAB);
 //        driver.get("https://www.cricbuzz.com");
 
-        seleniumUtils.launchApplications().switchToNewTab("https://www.cricbuzz.com");
+        seleniumUtils.launchApplications().launchNewTab("https://www.cricbuzz.com");
 
         //Pauses the execution for around 6 secs
         //Thread.sleep(6000);
@@ -80,21 +80,21 @@ public class WindowsSwitchingAndHandling {
         //Creating a new Window --> Selenium 4 Approach
 //        driver.switchTo().newWindow(WindowType.WINDOW);
 //        driver.get("https://www.youtube.com");
-        seleniumUtils.launchApplications().switchToNewWindow("https://www.youtube.com");
+        seleniumUtils.launchApplications().launchNewWindow("https://www.youtube.com");
 
 //        driver.switchTo().newWindow(WindowType.WINDOW);
 //        driver.get("https://www.pintrest.com");
-        seleniumUtils.launchApplications().switchToNewWindow("https://www.pintrest.com");
+        seleniumUtils.launchApplications().launchNewWindow("https://www.pintrest.com");
 
 //        driver.switchTo().newWindow(WindowType.WINDOW);
 //        driver.get("https://www.cricinfo.com");
 
-        seleniumUtils.launchApplications().switchToNewWindow("https://www.cricinfo.com");
+        seleniumUtils.launchApplications().launchNewWindow("https://www.cricinfo.com");
 
 //        driver.switchTo().newWindow(WindowType.WINDOW);
 //        driver.get("https://www.snapchat.com");
 
-        seleniumUtils.launchApplications().switchToNewTab("https://www.snapchat.com");
+        seleniumUtils.launchApplications().launchNewWindow("https://www.snapchat.com");
 
         //Pauses the execution for around 6 secs
         //Thread.sleep(6000);

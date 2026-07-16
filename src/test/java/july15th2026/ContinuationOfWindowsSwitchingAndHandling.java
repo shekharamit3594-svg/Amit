@@ -27,27 +27,30 @@ public class ContinuationOfWindowsSwitchingAndHandling {
     @SneakyThrows
     public void switchToWindow()
     {
-        seleniumUtils.launchApplications().launchApplication("https://www.google.com");
-        String googelHandle=driver.getWindowHandle(); //Gets the unique reference number for the window/tab launched
+        String googleWindowHandle=seleniumUtils.launchApplications().launchApplication("https://www.google.com");
+        //String googelHandle=driver.getWindowHandle(); //Gets the unique reference number for the window/tab launched
 
-        seleniumUtils.launchApplications().switchToNewTab("https://www.cricbuzz.com"); //Both the applications will be launched in the first window
+        seleniumUtils.launchApplications().launchNewTab("https://www.cricbuzz.com"); //Both the applications will be launched in the first window
 
-        seleniumUtils.launchApplications().switchToNewWindow("https://www.youtube.com");
-        String youtubeHandle=driver.getWindowHandle();
+        String youtubeHandle=seleniumUtils.launchApplications().launchNewWindow("https://www.youtube.com");
+        //String youtubeHandle=driver.getWindowHandle();
 
-        seleniumUtils.launchApplications().switchToNewTab("https://www.snapchat.com"); //Both the applications will be launched in the second window
-        String snapHandle=driver.getWindowHandle();
+        String snapHandle=seleniumUtils.launchApplications().launchNewTab("https://www.snapchat.com"); //Both the applications will be launched in the second window
+        //String snapHandle=driver.getWindowHandle();
 
-        seleniumUtils.launchApplications().switchToNewWindow("https://www.instagram.com"); //This will be launched in the third window
-
-        PathUtils.applySleep(3);
-        driver.switchTo().window(googelHandle); //Switching to the google tab
+        seleniumUtils.launchApplications().launchNewWindow("https://www.instagram.com"); //This will be launched in the third window
 
         PathUtils.applySleep(3);
-        driver.switchTo().window(youtubeHandle);
+        seleniumUtils.switchBetweenTabsOrWindows().switchToWindow(googleWindowHandle);
+        //driver.switchTo().window(googleWindowHandle); //Switching to the google tab
 
         PathUtils.applySleep(3);
-        driver.switchTo().window(snapHandle);
+        //driver.switchTo().window(youtubeHandle);
+        seleniumUtils.switchBetweenTabsOrWindows().switchToWindow(youtubeHandle);
+
+        PathUtils.applySleep(3);
+        //driver.switchTo().window(snapHandle);
+        seleniumUtils.switchBetweenTabsOrWindows().switchToWindow(snapHandle);
     }
 
     @Test(description = "Continuation of Windows Switching And Handling - Part 2",priority = 2)
@@ -56,13 +59,13 @@ public class ContinuationOfWindowsSwitchingAndHandling {
     {
         seleniumUtils.launchApplications().launchApplication("https://www.google.com");
 
-        seleniumUtils.launchApplications().switchToNewTab("https://www.cricbuzz.com"); //Both the applications will be launched in the first window
+        seleniumUtils.launchApplications().launchNewTab("https://www.cricbuzz.com"); //Both the applications will be launched in the first window
 
-        seleniumUtils.launchApplications().switchToNewWindow("https://www.youtube.com");
+        seleniumUtils.launchApplications().launchNewWindow("https://www.youtube.com");
 
-        seleniumUtils.launchApplications().switchToNewTab("https://www.snapchat.com"); //Both the applications will be launched in the second window
+        seleniumUtils.launchApplications().launchNewTab("https://www.snapchat.com"); //Both the applications will be launched in the second window
 
-        seleniumUtils.launchApplications().switchToNewWindow("https://www.instagram.com"); //This will be launched in the third window
+        seleniumUtils.launchApplications().launchNewWindow("https://www.instagram.com"); //This will be launched in the third window
 
         PathUtils.applySleep(3);
         //driver.switchTo().window(googelHandle); //Switching to the google tab
@@ -74,12 +77,14 @@ public class ContinuationOfWindowsSwitchingAndHandling {
 //        driver.switchTo().window(snapHandle);
 
         //Fetches all the unique reference numbers for the windows/tabs launched
-        Set<String> handles=driver.getWindowHandles();
+//        Set<String> handles=driver.getWindowHandles();
+//
+//        handles.forEach(s->{
+//            driver.switchTo().window(s);
+//            PathUtils.applySleep(3);
+//        });
 
-        handles.forEach(s->{
-            driver.switchTo().window(s);
-            PathUtils.applySleep(3);
-        });
+        seleniumUtils.switchBetweenTabsOrWindows().switchAllWindows();
     }
 
 }
