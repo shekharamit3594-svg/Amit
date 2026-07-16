@@ -74,6 +74,8 @@ public class SeleniumUtils {
 
             driver.get(url);
 
+            driver.manage().window().maximize(); //Maximize the browser
+
             return driver.getWindowHandle();
         }
     }
