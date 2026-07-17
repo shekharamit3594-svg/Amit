@@ -35,17 +35,17 @@ public class PathUtils {
 
     public String getScreenshotPath(String... imgPath)
     {
-        File f1=new File(System.getProperty("user.dir")+"//Screenshots");
+        File f1=new File(System.getProperty("user.dir")+"//Screenshots//"+getCurrentDateTime("dd-MM-yyyy"));
         f1.mkdirs();
 
         if(imgPath.length==0)
         {
-            return f1.getPath()+"//"+getCurrentDateTime("yyyy-MM-dd hh-mm-ss");
+            return f1.getPath()+"//"+getCurrentDateTime("yyyy-MM-dd hh-mm-ss")+".png";
         }
 
         else
         {
-            return f1.getPath()+"//"+imgPath[0];
+            return f1.getPath()+"//"+imgPath[0]+".png";
         }
     }
 }
