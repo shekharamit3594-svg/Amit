@@ -5,7 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.WindowType;
 
 import java.util.Optional;
@@ -20,11 +22,20 @@ public class SeleniumUtils {
     WebDriver driver;
     CreatingNewTabsAndWindows launchApplications;
     SwitchToWindows switchBetweenTabsOrWindows;
+    PerformClickActions clickActions;
+    EnterData typeData;
+    ElementUtils elementUtils;
+    Reports reports;
 
-    public SeleniumUtils(WebDriver driver) {
+    public SeleniumUtils(WebDriver driver,ElementUtils elementUtils,Reports reports)
+    {
         this.driver = driver;
         this.launchApplications=new CreatingWindowsAndTabs(driver);
         this.switchBetweenTabsOrWindows=new SwitchBetweenWindows(driver);
+        this.clickActions=new ClickActions(driver,elementUtils,reports);
+        this.typeData=new EnterDataActions(driver,elementUtils,reports);
+        this.elementUtils=new ElementUtils(driver);
+        this.reports=new Reports(driver);
     }
 
     public interface CreatingNewTabsAndWindows
@@ -40,6 +51,18 @@ public class SeleniumUtils {
         void switchAllWindows();
         void switchToParticularWindow(String title);
         void closeParticularTabOrWindow(String title);
+    }
+
+    public interface PerformClickActions
+    {
+        void performClick(WebElement element);
+        void performClick(By locator);
+    }
+
+    public interface EnterData
+    {
+        void enterText(WebElement element, String value);
+        void enterText(By locator, String value);
     }
 
     @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -129,6 +152,48 @@ public class SeleniumUtils {
                 if(windowFound.get())
                     return;
             });
+        }
+    }
+
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    @AllArgsConstructor
+    static class ClickActions implements PerformClickActions
+    {
+        WebDriver driver;
+        ElementUtils elementUtils;
+        Reports reports;
+
+        @Override
+        public void performClick(By locator) {
+            elementUtils.findElement(locator).click();
+            reports.captureScreenshot();
+        }
+
+        @Override
+        public void performClick(WebElement element) {
+            element.click();
+            reports.captureScreenshot();
+        }
+    }
+
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    @AllArgsConstructor
+    static class EnterDataActions implements EnterData
+    {
+        WebDriver driver;
+        ElementUtils elementUtils;
+        Reports reports;
+
+        @Override
+        public void enterText(By locator, String value) {
+            elementUtils.findElement(locator).sendKeys(value);
+            reports.captureScreenshot();
+        }
+
+        @Override
+        public void enterText(WebElement element, String value) {
+            element.sendKeys(value);
+            reports.captureScreenshot();
         }
     }
 }

@@ -1,8 +1,6 @@
 package july15th2026;
 
-import framework.BrowserUtils;
-import framework.PathUtils;
-import framework.SeleniumUtils;
+import framework.*;
 import framework.constants.BrowserNames;
 import lombok.SneakyThrows;
 import org.openqa.selenium.WebDriver;
@@ -20,7 +18,9 @@ public class ContinuationOfWindowsSwitchingAndHandling {
     public void setupOfFrameworkObjects()
     {
         driver= BrowserUtils.fetchDriver(BrowserNames.CHROME);
-        seleniumUtils=new SeleniumUtils(driver);
+        Reports reports=new Reports(driver);
+        ElementUtils elementUtils=new ElementUtils(driver);
+        seleniumUtils = new SeleniumUtils(driver,elementUtils,reports);
     }
 
     @Test(description = "Continuation of Windows Switching And Handling",priority = 1)
