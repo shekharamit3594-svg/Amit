@@ -26,7 +26,7 @@ public class SeleniumUtils {
     EnterData typeData;
     ElementUtils elementUtils;
     Reports reports;
-
+    PageNavigations pageNavigations;
     public SeleniumUtils(WebDriver driver,ElementUtils elementUtils,Reports reports)
     {
         this.driver = driver;
@@ -36,6 +36,7 @@ public class SeleniumUtils {
         this.typeData=new EnterDataActions(driver,elementUtils,reports);
         this.elementUtils=new ElementUtils(driver);
         this.reports=new Reports(driver);
+        this.pageNavigations=new HandlePageNavigations(driver);
     }
 
     public interface CreatingNewTabsAndWindows
@@ -51,6 +52,14 @@ public class SeleniumUtils {
         void switchAllWindows();
         void switchToParticularWindow(String title);
         void closeParticularTabOrWindow(String title);
+    }
+
+    public interface PageNavigations
+    {
+        void navigateTo(String url);
+        void refreshPage();
+        void navigateBack();
+        void navigateForward();
     }
 
     public interface PerformClickActions
@@ -194,6 +203,36 @@ public class SeleniumUtils {
         public void enterText(WebElement element, String value) {
             element.sendKeys(value);
             reports.captureScreenshot();
+        }
+    }
+
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    @AllArgsConstructor
+    static class HandlePageNavigations implements PageNavigations
+    {
+        WebDriver driver;
+
+        //Differences between driver.get() vs driver.navigate().to()
+        //There is no difference at all as driver.navigate().to() also uses driver.get() internally
+
+        @Override
+        public void navigateTo(String url) {
+            driver.navigate().to(url);
+        }
+
+        @Override
+        public void refreshPage() {
+            driver.navigate().refresh();
+        }
+
+        @Override
+        public void navigateBack() {
+            driver.navigate().back();
+        }
+
+        @Override
+        public void navigateForward() {
+            driver.navigate().forward();
         }
     }
 }

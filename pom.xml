@@ -16,9 +16,27 @@
         <testng-version>7.12.0</testng-version>
         <webdrivermanager-version>6.3.4</webdrivermanager-version>
         <lombok-version>LATEST</lombok-version>
+        <commons-configuration>LATEST</commons-configuration>
+        <commons-lang>LATEST</commons-lang>
     </properties>
 
     <dependencies>
+
+        <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!-- Source: https://mvnrepository.com/artifact/org.apache.commons/commons-configuration2 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-configuration2</artifactId>
+            <version>${commons-configuration}</version>
+            <scope>compile</scope>
+        </dependency>
 
         <!-- Source: https://mvnrepository.com/artifact/org.projectlombok/lombok -->
         <dependency>
